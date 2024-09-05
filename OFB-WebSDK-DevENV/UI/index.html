@@ -1,0 +1,334 @@
+<!DOCTYPE>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=1.0">
+		<script src="./dist/kore-ai-sdk.min.js" type="text/javascript"></script>
+		<link href="./dist/kore-ai-sdk.min.css" rel="stylesheet"></link>	
+		
+		
+	</head>
+	
+	<style>
+		body
+		{
+			margin: 0;
+			border: 0;
+			padding: 0;
+			overflow: hidden;
+			background: #ffffff;
+			font-family: "Lato";
+			overflow-y: scroll;
+		}
+		.bot-details-submission-form .display-block{
+			display: block;
+		}	
+		.bot-details-submission-form .header{
+			font-weight: bold;
+			height: 50px;
+			text-align: center;
+			font-size: 20px;
+		}
+		.bot-details-submission-form .display-none{
+			display: none;
+		}
+		.bot-details-submission-form.display-none{
+			display: none;
+		}
+		.bot-details-submission-form{
+			padding: 5%;
+		}
+		.bot-details-submission-form .kr-sg-input-text {
+			width: 100%;
+			position: relative;
+			margin-bottom: 10px;
+		}
+		.bot-details-submission-form .kr-sg-input-text .label-text {
+			text-align: left;
+			font-size: 14px;
+			font-weight: bold;
+			margin-bottom: 4px;
+		}
+		.bot-details-submission-form .kr-sg-input-text .label-text span.actions {
+			float: right;
+			color: #009dab;
+			font-weight: normal;
+			cursor: pointer;
+		}
+		.bot-details-submission-form .kr-sg-input-text .label-text span.actions .reset {
+			padding-right: 10px;
+			border-right: 1px solid #26344a;
+		}
+		.bot-details-submission-form .kr-sg-input-text .label-text span.actions .reset img {
+			padding-right: 5px;
+		}
+		.bot-details-submission-form .kr-sg-input-text .label-text span.actions .copy {
+			padding-left: 5px;
+		}
+		.bot-details-submission-form .kr-sg-input-text input {
+			border-radius: 2px;
+			height: 34px !important;
+			padding: 10px;
+			font-size: 14px;
+			width: 100%;
+			line-height: normal;
+			margin: 0 !important;
+			border: solid 1px #e5e8ec;
+		}
+		.bot-details-submission-form .kr-sg-input-text input::placeholder {
+			color: #8a959f;
+		}
+		.bot-details-submission-form .kr-sg-input-text input:focus {
+			border: solid 1px #1372ff !important;
+		}
+		.bot-details-submission-form .kr-sg-input-text input:active {
+			border: solid 1px #009dab !important;
+		}
+		.bot-details-submission-form .kr-sg-input-text input:disabled {
+			border: solid 1px #f3f3f4 !important;
+			color: #8a959f;
+		}
+		.bot-details-submission-form .kr-sg-input-text input:read-only {
+			pointer-events: none;
+		}
+		.bot-details-submission-form .kr-sg-input-text input.error {
+			border: solid 1px #ff001f !important;
+		}
+		.bot-details-submission-form .kr-sg-input-text input.error::placeholder {
+			opacity: 1;
+		}
+		.bot-details-submission-form .kr-sg-input-text .error-msg {
+			font-size: 12px;
+			margin-top: 5px;
+			color: #ff001f;
+			line-height: 1.17;
+		}
+		.bot-details-submission-form .kr-sg-input-text .eye-icon {
+			position: absolute;
+			bottom: 12px;
+			right: 12px;
+			cursor: pointer;
+		}
+		.bot-details-submission-form .kr-sg-dropdowns {
+	 width: 100%;
+	 margin-bottom: 15px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns.w-100 {
+	 width: 100%;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .label-text {
+	 font-size: 14px;
+	 margin-bottom: 4px;
+	 font-weight: bold;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .error-text {
+	 font-size: 12px;
+	 color: #ff001f;
+	 padding: 3px 0px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open {
+	 position: relative;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open.open .dropdown-input::before {
+	 content: "";
+	 position: absolute;
+	 line-height: 34px;
+	 font-size: 18px;
+	 height: 100%;
+	 right: 10px;
+	 transition: all 0.3s ease-in;
+	 z-index: 1;
+	 background-image: url('../../assets/icons/carrot-up-comp.svg');
+	 background-size: 14px;
+	 background-repeat: no-repeat;
+	 background-position: center;
+	 width: 14px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input {
+	 position: relative;
+	 height: 34px;
+	 width: 100%;
+	 line-height: 32px;
+	 border-radius: 2px;
+	 padding: 0 10px;
+	 text-align: left;
+	 overflow: hidden;
+	 white-space: nowrap;
+	 text-overflow: ellipsis;
+	 max-width: 100%;
+	 border: solid 1px #e5e8ec;
+     background-color: #fff;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input .multi-selected-items {
+	 padding: 4px 8px;
+	 border-radius: 12px;
+	 min-width: 40px;
+	 margin-right: 10px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input .multi-selected-items .length-count {
+	 font-size: 12px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input .multi-selected-items .cross-icon {
+	 border-radius: 100px;
+	 padding: 0px 5px;
+	 position: relative;
+	 top: 3px;
+	 left: 3px;
+	 width: 16px;
+	 height: 16px;
+	 display: inline-block;
+	 position: relative;
+	 transition: all 0.3s ease-in;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input .multi-selected-items .cross-icon img {
+	 width: 10px;
+	 height: 10px;
+	 vertical-align: inherit;
+	 position: absolute;
+	 top: 3px;
+	 left: 3px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input .multi-selected-items .cross-icon:hover {
+	 background-color: #c9cdd4;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input .multi-selected-items .cross-icon i {
+	 position: relative;
+	 top: -2px;
+	 font-size: 10px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input::before {
+	 content: "";
+	 position: absolute;
+	 line-height: 34px;
+	 font-size: 18px;
+	 height: 100%;
+	 right: 10px;
+	 transition: all 0.3s ease-in;
+	 z-index: 1;
+	 background-image: url('../../assets/icons/carrot-down-comp.svg');
+	 background-size: 14px;
+	 background-repeat: no-repeat;
+	 background-position: center;
+	 width: 14px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input.inline {
+	 border: 0;
+	 border-radius: 0px;
+	 border-bottom: 1px solid #f2f3f5;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input.inline:hover {
+	 border: 0;
+	 border-bottom: 1px solid #009dab;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input.inline:focus {
+	 border: solid 1px #1372ff;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input.inline:disabled {
+	 border: 0;
+	 border-bottom: solid 1px #f3f3f4;
+	 opacity: 0.3;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input.error {
+	 border: solid 1px #ff001f !important;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input:hover {
+	 border: solid 1px #ccd1d7;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input:focus {
+	border: solid 1px #1372ff;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .dropdown-input:disabled {
+	 border: solid 1px #f3f3f4;
+	 opacity: 0.3;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu {
+	 border: 0;
+	 border-radius: 2px;
+	 box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2);
+	 width: 100%;
+	 padding: 0;
+	 margin: 0;
+	 z-index: 999;
+	 list-style: none;
+	 overflow: auto;
+	 max-height: 100px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu .kr-sg-checkbox {
+	 margin: 0;
+	 padding: 9.5px 10px 9.05px 10px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu .search-box {
+	 padding: 0 10px;
+	 position: relative;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu .search-box::before {
+	 content: "";
+	 position: absolute;
+	 line-height: 34px;
+	 font-size: 12px;
+	 height: 100%;
+	 left: 10px;
+	 background-image: url('../../assets/icons/search.svg');
+	 background-size: 14px;
+	 background-repeat: no-repeat;
+	 background-position: center;
+	 width: 14px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu .search-box .seach-input {
+	 width: 100%;
+	 line-height: 34px;
+	 height: 34px;
+	 border: 0;
+	 font-size: 14px;
+	 padding-left: 20px;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu li a {
+	 line-height: 40px;
+	 padding: 0 10px;
+	 font-size: 14px;
+	 overflow: hidden;
+	 white-space: nowrap;
+	 text-overflow: ellipsis;
+	 max-width: 100%;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu li a.selected {
+	 position: relative;
+	 background-color: #f2f3f5;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu li a.selected::before {
+	 content: "";
+	 background: url("../../assets/icons/checkTickIconGray.svg") no-repeat;
+	 position: absolute;
+	 line-height: 40px;
+	 height: 100%;
+	 right: 16px;
+	 transition: all 0.3s ease-in;
+	 z-index: 1;
+	 height: 100%;
+	 width: 14px;
+	 background-position: center;
+	 background-size: 100%;
+}
+ .bot-details-submission-form .kr-sg-dropdowns .dropdown-open .content-menu li a:hover {
+	 background-color: #f2f3f5;
+}
+.bot-details-submission-form .submit{
+	border: 1px solid transparent;
+    background: #009dab;
+    padding: 0px 20px;
+    height: 26px;
+    font-size: 12px;
+    border-radius: 4px;
+    color: #fff;
+    min-width: 60px;
+    text-align: center;
+    transition: 0.2s all ease-in;
+}
+ 
+		
+	</style>
+	<body>
+		<img src="./libs/images/bg.png" class="bgImg" style="width: 100%;
+        height: auto;
+        overflow: scroll;margin: 0 auto;display: block;"/>
+	</body>
+</html>
