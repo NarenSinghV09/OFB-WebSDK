@@ -17,7 +17,7 @@
             //fall back to clients jquery version
             koreJquery = window.jQuery;
         }
-        
+
         return (function ($) {
 
             //Actual  chatwindow.js koreBotChat function code starts here
@@ -32,8 +32,21 @@
             var detectScriptTag = /<script\b[^>]*>([\s\S]*?)/gm;
             var _eventQueue = {};
             var carouselEles = [];
-            var prevRange, accessToken, koreAPIUrl, fileToken, fileUploaderCounter = 0, bearerToken = '', assertionToken = '', messagesQueue = [], historyLoading = false;
-            var speechServerUrl = '', userIdentity = '', isListening = false, isRecordingStarted = false, isSpeechEnabled = false, speechPrefixURL = "", sidToken = "", carouselTemplateCount = 0, waiting_for_message = false, loadHistory = false;
+            var prevRange, accessToken, koreAPIUrl, fileToken, fileUploaderCounter = 0,
+                bearerToken = '',
+                assertionToken = '',
+                messagesQueue = [],
+                historyLoading = false;
+            var speechServerUrl = '',
+                userIdentity = '',
+                isListening = false,
+                isRecordingStarted = false,
+                isSpeechEnabled = false,
+                speechPrefixURL = "",
+                sidToken = "",
+                carouselTemplateCount = 0,
+                waiting_for_message = false,
+                loadHistory = false;
             /******************* Mic variable initilization *******************/
             var _exports = {},
                 _template, _this = {};
@@ -45,7 +58,9 @@
 
             var recorderWorkerPath = "../libs/recorderWorker.js";
             var INTERVAL = 250;
-            var _pingTimer, _pingTime = 30000, isSendButton = false, allowGoogleSpeech = false;
+            var _pingTimer, _pingTime = 30000,
+                isSendButton = false,
+                allowGoogleSpeech = false;
 
             var isTyping = false;
             var typingTimer;
@@ -54,23 +69,39 @@
             /***************** Mic initilization code end here ************************/
 
             /******************************* TTS variable initialization **************/
-            var _ttsContext = null, _ttsConnection = null,_ttsInterface, ttsServerUrl = '', ttsAudioSource = null, _txtToSpeak = "", isTTSOn = false, isTTSEnabled = false, optionIndex = 65, autoEnableSpeechAndTTS = false;    // Audio context
+            var _ttsContext = null,
+                _ttsConnection = null,
+                _ttsInterface, ttsServerUrl = '',
+                ttsAudioSource = null,
+                _txtToSpeak = "",
+                isTTSOn = false,
+                isTTSEnabled = false,
+                optionIndex = 65,
+                autoEnableSpeechAndTTS = false; // Audio context
             /************************** TTS initialization code end here **************/
 
             /*************************** file upload variable *******************************/
             var appConsts = {};
             var attachmentInfo = {};
-            var allowedFileTypes = ["m4a", "amr", "aac", "wav", "mp3", "mp4", "mov", "3gp", "flv", "png", "jpg", "jpeg", "gif", "bmp", "csv", "txt", "json", "pdf", "doc", "dot", "docx", "docm"
-                , "dotx", "dotm", "xls", "xlt", "xlm", "xlsx", "xlsm", "xltx", "xltm", "xlsb", "xla", "xlam", "xll", "xlw", "ppt", "pot", "pps", "pptx", "pptm", "potx", "potm", "ppam",
+            var allowedFileTypes = ["m4a", "amr", "aac", "wav", "mp3", "mp4", "mov", "3gp", "flv", "png", "jpg", "jpeg", "gif", "bmp", "csv", "txt", "json", "pdf", "doc", "dot", "docx", "docm", "dotx", "dotm", "xls", "xlt", "xlm", "xlsx", "xlsm", "xltx", "xltm", "xlsb", "xla", "xlam", "xll", "xlw", "ppt", "pot", "pps", "pptx", "pptm", "potx", "potm", "ppam",
                 "ppsx", "ppsm", "sldx", "sldm", "zip", "rar", "tar", "wpd", "wps", "rtf", "msg", "dat", "sdf", "vcf", "xml", "3ds", "3dm", "max", "obj", "ai", "eps", "ps", "svg", "indd", "pct", "accdb",
                 "db", "dbf", "mdb", "pdb", "sql", "apk", "cgi", "cfm", "csr", "css", "htm", "html", "jsp", "php", "xhtml", "rss", "fnt", "fon", "otf", "ttf", "cab", "cur", "dll", "dmp", "drv", "7z", "cbr",
-                "deb", "gz", "pkg", "rpm", "zipx", "bak", "avi", "m4v", "mpg", "rm", "swf", "vob", "wmv", "3gp2", "3g2", "asf", "asx", "srt", "wma", "mid", "aif", "iff", "m3u", "mpa", "ra", "aiff", "tiff"];
+                "deb", "gz", "pkg", "rpm", "zipx", "bak", "avi", "m4v", "mpg", "rm", "swf", "vob", "wmv", "3gp2", "3g2", "asf", "asx", "srt", "wma", "mid", "aif", "iff", "m3u", "mpa", "ra", "aiff", "tiff"
+            ];
             appConsts.CHUNK_SIZE = 1024 * 1024;
-            var filetypes = {}, audio = ['m4a', 'amr', 'wav', 'aac', 'mp3'], video = ['mp4', 'mov', '3gp', 'flv'], image = ['png', 'jpg', 'jpeg'];
+            var filetypes = {},
+                audio = ['m4a', 'amr', 'wav', 'aac', 'mp3'],
+                video = ['mp4', 'mov', '3gp', 'flv'],
+                image = ['png', 'jpg', 'jpeg'];
             filetypes.audio = audio;
             filetypes.video = video;
             filetypes.image = image;
-            filetypes.file = { limit: { size: 25 * 1024 * 1024, msg: "Please limit the individual file upload size to 25 MB or lower" } };
+            filetypes.file = {
+                limit: {
+                    size: 25 * 1024 * 1024,
+                    msg: "Please limit the individual file upload size to 25 MB or lower"
+                }
+            };
             filetypes.determineFileType = function (extension) {
                 extension = extension.toLowerCase();
                 if ((filetypes.image.indexOf(extension) > -1)) {
@@ -91,7 +122,7 @@
             window.linechartCount = 0;
             var available_charts = [];
             var chatInitialize;
-            window.chatInitialize=chatInitialize;
+            window.chatInitialize = chatInitialize;
             var customTemplateObj = {};
             window.chartColors = ['#75b0fe', '#f78083', '#99ed9e', '#fde296', '#26344a', '#5f6bf7', '#b3bac8', '#99a1fd', '#9cebf9', '#f7c7f4'];
             /**************************File upload variable end here **************************/
@@ -134,8 +165,7 @@
                     }
 
                     return setFlags;
-                }
-                catch (e) {
+                } catch (e) {
                     return setFlags;
                 }
             };
@@ -162,7 +192,7 @@
             function findSortedIndex(array, value) {
                 var low = 0,
                     high = array.length;
-    
+
                 while (low < high) {
                     var mid = low + high >>> 1;
                     if (array[mid] < value) low = mid + 1;
@@ -217,18 +247,18 @@
                     }
                     return d.toDateString() + " at " + helpers.formatAMPM(d);
                 },
-                'convertMDtoHTML': function (val, responseType,msgItem) {
-                    if(typeof val==='object'){
+                'convertMDtoHTML': function (val, responseType, msgItem) {
+                    if (typeof val === 'object') {
                         try {
-                            val=JSON.stringify(val);
+                            val = JSON.stringify(val);
                         } catch (error) {
-                            val="";
+                            val = "";
                         }
                     }
                     var hyperLinksMap = {};
                     var mdre = {};
-                    if(msgItem && msgItem.cInfo && msgItem.cInfo.ignoreCheckMark){
-                        var ignoreCheckMark=msgItem.cInfo.ignoreCheckMark;
+                    if (msgItem && msgItem.cInfo && msgItem.cInfo.ignoreCheckMark) {
+                        var ignoreCheckMark = msgItem.cInfo.ignoreCheckMark;
                     }
                     //mdre.date = new RegExp(/\\d\(\s*(.{10})\s*\)/g);
                     mdre.date = new RegExp(/\\d\(\s*(.{10})\s*(?:,\s*["'](.+?)["']\s*)?\)/g);
@@ -253,6 +283,7 @@
                     mmntns.dd = new RegExp(/^(d{2})[^d]|[^d](d{2})[^d]/g);
                     mmntns.fy = new RegExp(/(y{4})|y{2}/g);
                     var regexkeys = Object.keys(mdre);
+
                     function matchmap(regexval, stringval) {
                         var da;
                         var matches = [];
@@ -270,6 +301,7 @@
                         }
                         return matches;
                     }
+
                     function ucreplacer(match) {
                         return match.toUpperCase();
                     }
@@ -340,7 +372,8 @@
                                 var curcode = new RegExp(/\w{3}/);
                                 if (currmatcharray.length) {
                                     for (k = 0; k < currmatcharray.length; k++) {
-                                        var currops = {}, fcode;
+                                        var currops = {},
+                                            fcode;
                                         currops.style = 'currency';
                                         if (currmatcharray[k].matchval2) {
                                             fcode = curcode.exec(currmatcharray[k].matchval2);
@@ -359,9 +392,11 @@
                                 break;
                         }
                     }
+
                     function nextLnReplacer(match, p1, offset, string) {
                         return "<br/>";
                     }
+
                     function ignoreWords(str) {
                         var _words = ['onclick', 'onmouse', 'onblur', 'onscroll', 'onStart'];
                         _words.forEach(function (word) {
@@ -371,11 +406,13 @@
                         return str;
                     }
                     var nextln = regEx.NEWLINE;
+
                     function linkreplacer(match, p1, offset, string) {
                         var dummyString = string.replace(_regExForMarkdownLink, '[]');
                         dummyString = ignoreWords(dummyString);
                         if (dummyString.indexOf(match) !== -1) {
-                            var _link = p1.indexOf('http') < 0 ? 'http://' + match : match, _target;
+                            var _link = p1.indexOf('http') < 0 ? 'http://' + match : match,
+                                _target;
                             //_link = encodeURIComponent(_link);
                             target = "target='underscoreblank'";
                             if (hyperLinksMap) {
@@ -394,12 +431,13 @@
                     // } catch (e) {
                     //     str = str || '';
                     // }
-			if(typeof str === 'number'){
-                        str =  str.toString(); 
+                    if (typeof str === 'number') {
+                        str = str.toString();
                     }
-                        str = str || '';
-                    
-                    var newStr = '', wrapper1;
+                    str = str || '';
+
+                    var newStr = '',
+                        wrapper1;
                     if (responseType === 'user') {
                         str = str.replace(/onerror=/gi, 'abc-error=');
                         wrapper1 = document.createElement('div');
@@ -419,7 +457,7 @@
                             var linkArray = str.match(/<a[^>]*>([^<]+)<\/a>/g);
                             for (var x = 0; x < linkArray.length; x++) {
                                 var _newLA = document.createElement('div');
-                                var _detectedLink=linkArray[x];
+                                var _detectedLink = linkArray[x];
                                 _newLA.innerHTML = linkArray[x];
                                 //for mailto: links, new line character need to be repaced with %0A 
                                 if (_detectedLink.indexOf("href='mailto:") > -1 || _detectedLink.indexOf('href="mailto:') > -1) {
@@ -441,10 +479,10 @@
                             str = wrapper1.innerHTML.replace(_regExForLink, linkreplacer);
                         }
                     }
-                    if(ignoreCheckMark){
-                        str=val;
-                    }else{
-                    str = helpers.checkMarkdowns(str, hyperLinksMap);
+                    if (ignoreCheckMark) {
+                        str = val;
+                    } else {
+                        str = helpers.checkMarkdowns(str, hyperLinksMap);
                     }
                     var hrefRefs = Object.keys(hyperLinksMap);
                     if (hrefRefs && hrefRefs.length) {
@@ -463,7 +501,7 @@
                     return helpers.nl2br(str, true);
                 },
                 'checkMarkdowns': function (val, hyperLinksMap) {
-                    if(val===''){
+                    if (val === '') {
                         return val;
                     }
                     var txtArr = val.split(/\r?\n/);
@@ -491,10 +529,10 @@
                             txtArr[i] = '\r\n';
                             _lineBreakAdded = true;
                         } else if (txtArr[i].indexOf('*') === 0) {
-                            if (!isEven(txtArr[i].split('*').length - 1) && KoreSDK.chatConfig.masking) {    // Not sure what is the impact
+                            if (!isEven(txtArr[i].split('*').length - 1) && KoreSDK.chatConfig.masking) { // Not sure what is the impact
                                 txtArr[i] = '\r\n&#9679; ' + txtArr[i].substring(1);
                                 _lineBreakAdded = true;
-                            } else  {
+                            } else {
                                 txtArr[i] = txtArr[i];
                                 _lineBreakAdded = true;
                             }
@@ -510,7 +548,7 @@
                         }
                         var j;
                         // Matches Image markup ![test](http://google.com/image.png)
-                        if (txtArr[i].indexOf(' ![') === -1) {// replace method trimming last'$' character, to handle this adding ' ![' extra space
+                        if (txtArr[i].indexOf(' ![') === -1) { // replace method trimming last'$' character, to handle this adding ' ![' extra space
                             txtArr[i] = txtArr[i].replace('![', ' ![');
                         }
                         var _matchImage = txtArr[i].match(/\!\[([^\]]+)\](|\s)+\(([^\)])+\)/g);
@@ -559,14 +597,14 @@
                             for (j = 0; j < _matchAstrik.length; j++) {
                                 var _boldTxt = _matchAstrik[j];
                                 var validBoldGroup = true;
-                                if(_boldTxt.includes('*')){
-                                    var _tempStr = _boldTxt.replace(/\*/g,'');
+                                if (_boldTxt.includes('*')) {
+                                    var _tempStr = _boldTxt.replace(/\*/g, '');
                                     var letterNumber = /^[0-9a-zA-Z!@#$%^&()_ +\-=\[\]{};':"\\|,.<>\/?]+$/;
-                                    if(!(_tempStr.match(letterNumber))){
+                                    if (!(_tempStr.match(letterNumber))) {
                                         validBoldGroup = false;
                                     }
                                 }
-                                if(validBoldGroup){
+                                if (validBoldGroup) {
                                     _boldTxt = _boldTxt.substring(1, _boldTxt.length - 1);
                                     _boldTxt = '<b>' + _boldTxt.trim() + '</b>';
                                     txtArr[i] = txtArr[i].replace(_matchAstrik[j], _boldTxt);
@@ -644,6 +682,7 @@
                 n = Number(n);
                 return n === 0 || !!(n && !(n % 2));
             }
+
             function extend() {
                 var rec = function (obj) {
                     var recRes = {};
@@ -707,7 +746,7 @@
                 attachEventListener();
             }
             // iframe of child window events //
-            function attachEventListener(){
+            function attachEventListener() {
                 // Create IE + others compatible event handler
                 var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
                 var eventer = window[eventMethod];
@@ -726,110 +765,114 @@
                     }
                 }, false);
             }
-            function postMessageToChildIframes (iframe,postPayload) {
-                if(iframe && iframe.length && iframe[0] && iframe[0].contentWindow && postPayload){
+
+            function postMessageToChildIframes(iframe, postPayload) {
+                if (iframe && iframe.length && iframe[0] && iframe[0].contentWindow && postPayload) {
                     iframe[0].contentWindow.postMessage(
                         postPayload, '*'
-                  );
+                    );
                 }
-             };
-        // iframe of child window events ends//
+            };
+            // iframe of child window events ends//
 
-        // inline model for iframes starts here//
-        function openModal(template, showClose){
-            var chatBodyModal=  $('#chatBodyModal');
-            var close = document.getElementsByClassName("closeChatBodyModal")[0];
+            // inline model for iframes starts here//
+            function openModal(template, showClose) {
+                var chatBodyModal = $('#chatBodyModal');
+                var close = document.getElementsByClassName("closeChatBodyModal")[0];
                 close.onclick = function () {
-                    var postPayload={
-                        payload:{},
-                        event : 'formEvent', // need to find another way to make it common ,giving a static value due to time constrain //
-                        action : 'formCancel',
-                        metaData:{},
-                     }
+                    var postPayload = {
+                        payload: {},
+                        event: 'formEvent', // need to find another way to make it common ,giving a static value due to time constrain //
+                        action: 'formCancel',
+                        metaData: {},
+                    }
                     var iframe = chatBodyModal.find('iframe');
-                    postMessageToChildIframes(iframe,postPayload);
+                    postMessageToChildIframes(iframe, postPayload);
                     chatBodyModal.hide();
                 }
-            if(template){
-                chatBodyModal.find('.closeChatBodyModal').css('display','none');
-                chatBodyModal.find('.loading_form').css('z-index',999);
-                if(chatBodyModal && chatBodyModal.length){
-                    chatBodyModal.find('#chatBodyModalContent').empty();
-                    chatBodyModal.find('#chatBodyModalContent').append(template);
-                    chatBodyModal.show();
-                }
-                setTimeout(function(){
-                    chatBodyModal.find('.loading_form').css('z-index',0);
-                    if(showClose){
-                        chatBodyModal.find('.closeChatBodyModal').css('display','block');
-                   } else {
-                       chatBodyModal.find('.closeChatBodyModal').css('display','none');
-                     }
-                },1500);
-            } else {
-                chatBodyModal.find('.closeChatBodyModal').css('display','none');
-                setTimeout(function(){
-                    chatBodyModal.find('#chatBodyModalContent').empty();
-                },1000);
-                chatBodyModal.hide(); 
-            }
-            }
-        // inline model for iframes starts ends//
-
-        // form event actions starts here //
-        function formAction(event){
-            if(event && event.action==='formSubmit'){
-               openModal();
-               if($('.kore-chat-body .uiformComponent').length){
-                $('.kore-chat-body .uiformComponent').closest('.inlineIframeContainer').css('display', 'none');
-               }
-            } else if(event.action==='formCancel'){
-                if($('.kore-chat-body .uiformComponent').length){
-                    $('.kore-chat-body .uiformComponent').closest('.inlineIframeContainer').css('display', 'none');
-                   }
-            } else if (event.action==='formClose'){
-               openModal();
-               if($('.kore-chat-body .uiformComponent').length){
-                $('.kore-chat-body .uiformComponent').closest('.inlineIframeContainer').css('display', 'none');
-               }
-            }
-        }
-        chatWindow.prototype.renderWebForm = function (msgData, returnTemplate) {
-            if (msgData.message && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.formData) {
-                msgData.renderType = msgData.message[0].component.payload.formData.renderType;
-                msgData.message[0].component.payload.template_type = 'iframe';
-                if (!returnTemplate && msgData.renderType === 'inline') {
-                     this.renderMessage(msgData);
+                if (template) {
+                    chatBodyModal.find('.closeChatBodyModal').css('display', 'none');
+                    chatBodyModal.find('.loading_form').css('z-index', 999);
+                    if (chatBodyModal && chatBodyModal.length) {
+                        chatBodyModal.find('#chatBodyModalContent').empty();
+                        chatBodyModal.find('#chatBodyModalContent').append(template);
+                        chatBodyModal.show();
+                    }
+                    setTimeout(function () {
+                        chatBodyModal.find('.loading_form').css('z-index', 0);
+                        if (showClose) {
+                            chatBodyModal.find('.closeChatBodyModal').css('display', 'block');
+                        } else {
+                            chatBodyModal.find('.closeChatBodyModal').css('display', 'none');
+                        }
+                    }, 1500);
                 } else {
-                    var popupHtml = $(this.getChatTemplate("iframe")).tmpl({
-                        'msgData': msgData,
-                        'helpers': helpers,
-                        "link_url": msgData.message[0].component.payload.formData.formLink
-                    });
-                    if (returnTemplate) {
-                        return popupHtml;
-                    } else {
-                        openModal(popupHtml[0], true);
+                    chatBodyModal.find('.closeChatBodyModal').css('display', 'none');
+                    setTimeout(function () {
+                        chatBodyModal.find('#chatBodyModalContent').empty();
+                    }, 1000);
+                    chatBodyModal.hide();
+                }
+            }
+            // inline model for iframes starts ends//
+
+            // form event actions starts here //
+            function formAction(event) {
+                if (event && event.action === 'formSubmit') {
+                    openModal();
+                    if ($('.kore-chat-body .uiformComponent').length) {
+                        $('.kore-chat-body .uiformComponent').closest('.inlineIframeContainer').css('display', 'none');
+                    }
+                } else if (event.action === 'formCancel') {
+                    if ($('.kore-chat-body .uiformComponent').length) {
+                        $('.kore-chat-body .uiformComponent').closest('.inlineIframeContainer').css('display', 'none');
+                    }
+                } else if (event.action === 'formClose') {
+                    openModal();
+                    if ($('.kore-chat-body .uiformComponent').length) {
+                        $('.kore-chat-body .uiformComponent').closest('.inlineIframeContainer').css('display', 'none');
                     }
                 }
-    
             }
-        }
-        // form event actions ends here //
-            function addBottomSlider(){
+            chatWindow.prototype.renderWebForm = function (msgData, returnTemplate) {
+                if (msgData.message && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.formData) {
+                    msgData.renderType = msgData.message[0].component.payload.formData.renderType;
+                    msgData.message[0].component.payload.template_type = 'iframe';
+                    if (!returnTemplate && msgData.renderType === 'inline') {
+                        this.renderMessage(msgData);
+                    } else {
+                        var popupHtml = $(this.getChatTemplate("iframe")).tmpl({
+                            'msgData': msgData,
+                            'helpers': helpers,
+                            "link_url": msgData.message[0].component.payload.formData.formLink
+                        });
+                        if (returnTemplate) {
+                            return popupHtml;
+                        } else {
+                            openModal(popupHtml[0], true);
+                        }
+                    }
+
+                }
+            }
+            // form event actions ends here //
+            function addBottomSlider() {
                 $('.kore-chat-window').remove('.kore-action-sheet');
-                var actionSheetTemplate='<div class="kore-action-sheet hide">\
+                var actionSheetTemplate = '<div class="kore-action-sheet hide">\
                 <div class="actionSheetContainer"></div>\
                 </div>';
                 $('.kore-chat-window').append(actionSheetTemplate);
             }
-            
+
             function updateOnlineStatus() {
-                if ("boolean" === typeof(navigator["onLine"])) {
+                if ("boolean" === typeof (navigator["onLine"])) {
                     if (navigator.onLine) {
                         this.hideError();
-                        if(bot && bot.RtmClient){
-                                bot.getHistory({forHistorySync:true,limit:30});                           
+                        if (bot && bot.RtmClient) {
+                            bot.getHistory({
+                                forHistorySync: true,
+                                limit: 30
+                            });
                         }
 
                     } else {
@@ -866,27 +909,25 @@
 
                 // handling quick replies
                 var quickReplyDivs = document.querySelectorAll('.quickReplies');
-                for(var i=0;i<quickReplyDivs.length;i++) {
+                for (var i = 0; i < quickReplyDivs.length; i++) {
                     var btnsParentDiv = quickReplyDivs[i].querySelectorAll('.quick_replies_btn_parent');
                     var leftScrollBtn = quickReplyDivs[i].querySelectorAll('.quickreplyLeftIcon');
                     var rightScrollBtn = quickReplyDivs[i].querySelectorAll('.quickreplyRightIcon');
-                    if(btnsParentDiv[0].hasChildNodes()) {
-                        if(btnsParentDiv[0].scrollLeft > 0) {
+                    if (btnsParentDiv[0].hasChildNodes()) {
+                        if (btnsParentDiv[0].scrollLeft > 0) {
                             leftScrollBtn[0].classList.remove('hide');
-                        }
-                        else if(leftScrollBtn.length){
+                        } else if (leftScrollBtn.length) {
                             leftScrollBtn[0].classList.add('hide');
                         }
-                        if(btnsParentDiv[0].offsetWidth < btnsParentDiv[0].scrollWidth) {
+                        if (btnsParentDiv[0].offsetWidth < btnsParentDiv[0].scrollWidth) {
                             rightScrollBtn[0].classList.remove('hide');
-                        }
-                        else {
-                            if(rightScrollBtn &&  rightScrollBtn[0]){
+                        } else {
+                            if (rightScrollBtn && rightScrollBtn[0]) {
                                 rightScrollBtn[0].classList.add('hide');
-                            }   
+                            }
                         }
                     }
-                }   
+                }
 
                 /* Handling for full size table */
                 if ($('.kore-chat-window').width() > 460) {
@@ -900,8 +941,7 @@
                             $(this).removeClass("hide")
                         }
                     });
-                }
-                else {
+                } else {
                     $(".accordionTable").each(function () {
                         if ($(this).hasClass("responsive")) {
                             $(this).removeClass("hide")
@@ -915,6 +955,7 @@
                 }
                 /* Handling for table ends*/
             };
+
             function handleImagePreview() {
                 var modal = document.getElementById('myModal');
 
@@ -950,16 +991,17 @@
                     modal.style.display = "none";
                 }
             }
+
             function isMobile() {
                 try {
                     var isMobile = (/iphone|ipod|android|blackberry|fennec/).test(navigator.userAgent.toLowerCase()) || window.screen.width <= 480;
                     return isMobile;
-                }
-                catch (e) {
+                } catch (e) {
                     return false;
                 }
             }
-            function setCollapsedModeStyles(){
+
+            function setCollapsedModeStyles() {
                 // $('.kore-chat-window').css({left:$('body').width()-400,width:'400px'});
             }
             chatWindow.prototype.init = function () {
@@ -967,7 +1009,12 @@
                 window.chatContainerConfig = me;
                 me.config.botOptions.botInfo.name = me.config.botOptions.botInfo.name.escapeHTML();
                 _botInfo = me.config.botOptions.botInfo;
-                me.config.botOptions.botInfo = { chatBot: _botInfo.name, taskBotId: _botInfo._id, customData: _botInfo.customData, tenanturl: _botInfo.tenanturl };
+                me.config.botOptions.botInfo = {
+                    chatBot: _botInfo.name,
+                    taskBotId: _botInfo._id,
+                    customData: _botInfo.customData,
+                    tenanturl: _botInfo.tenanturl
+                };
                 var tempTitle = _botInfo.name;
                 me.config.botMessages = botMessages;
 
@@ -985,9 +1032,9 @@
                 loadHistory = me.config.loadHistory || false;
                 historyLoading = loadHistory ? true : false;
                 me.config.botOptions.loadHistory = me.config.loadHistory;
-                me.config.botOptions.chatHistory=me.config.chatHistory;
-                me.config.botOptions.handleError=me.config.handleError;
-                me.config.botOptions.googleMapsAPIKey=me.config.googleMapsAPIKey;
+                me.config.botOptions.chatHistory = me.config.chatHistory;
+                me.config.botOptions.handleError = me.config.handleError;
+                me.config.botOptions.googleMapsAPIKey = me.config.googleMapsAPIKey;
                 autoEnableSpeechAndTTS = me.config.autoEnableSpeechAndTTS || false;
                 /* autoEnableSpeechAndTTS will on if and only if both tts and mic are enabled */
                 if (isTTSEnabled && (isSpeechEnabled || allowGoogleSpeech) && autoEnableSpeechAndTTS) {
@@ -998,29 +1045,28 @@
                 }
                 var chatWindowHtml = $(me.getChatTemplate()).tmpl(me.config);
 
-                $(chatWindowHtml).off('click', '.drpdown_theme').on('click', '.drpdown_theme', function(e){
+                $(chatWindowHtml).off('click', '.drpdown_theme').on('click', '.drpdown_theme', function (e) {
                     me.showDropdown(this);
                 });
 
-                $(chatWindowHtml).off('click', '.themeName').on('click', '.themeName', function(e){
+                $(chatWindowHtml).off('click', '.themeName').on('click', '.themeName', function (e) {
                     var themeChange = $(this).attr('id');
-                    if(themeChange == 'shopping_theme'){
+                    if (themeChange == 'shopping_theme') {
                         $('.kore-chat-window').removeClass('logo_theme').addClass("shopping_theme");
-                    }
-                    else{
+                    } else {
                         $('.kore-chat-window').removeClass('shopping_theme').addClass("logo_theme");
-                    } 
+                    }
                 });
-                
+
                 me.config.chatContainer = chatWindowHtml;
 
                 me.config.chatTitle = tempTitle;
-                if(!me.config.minimizeMode){
-                    bot.init(me.config.botOptions,me.config.messageHistoryLimit);
-                }else{
+                if (!me.config.minimizeMode) {
+                    bot.init(me.config.botOptions, me.config.messageHistoryLimit);
+                } else {
                     chatWindowHtml.addClass('minimize');
                     chatWindowHtml.find('.minimized-title').html("Talk to " + me.config.chatTitle);
-                    me.skipedInit=true;
+                    me.skipedInit = true;
                 }
                 if (me.config.allowLocation) {
                     bot.fetchUserLocation();
@@ -1036,14 +1082,14 @@
                 if (!me.config.minimizeMode) {
                     bot.destroy();
                 }
-                messagesQueue=[];
+                messagesQueue = [];
                 if (me.config && me.config.chatContainer) {
                     if (!me.config.minimizeMode) {
                         me.config.chatContainer.remove();
-                    }else{
+                    } else {
                         me.config.chatContainer.find('.kore-chat-header .header-title').html(me.config.botMessages.reconnecting);
                         me.config.chatContainer.addClass('minimize');
-                        me.skipedInit=true;                
+                        me.skipedInit = true;
                     }
                 }
                 if (ttsAudioSource) {
@@ -1064,11 +1110,11 @@
                 bot.init(me.config.botOptions);
             };
 
-             /**
+            /**
              * Typing Events && Agent end event 
              */
 
-             function sendStopTypingEvent () {
+            function sendStopTypingEvent() {
                 var messageToBot = {};
                 messageToBot["event"] = "stop_typing";
                 messageToBot["message"] = {
@@ -1087,11 +1133,11 @@
             chatWindow.prototype.bindEvents = function () {
                 var me = this;
                 var _chatContainer = me.config.chatContainer;
-               
+
                 _chatContainer.draggable({
-                    handle: _chatContainer.find(".kore-chat-header .header-title"),
-                    containment: "document",
-                })
+                        handle: _chatContainer.find(".kore-chat-header .header-title"),
+                        containment: "document",
+                    })
                     .resizable({
                         handles: "n, e, w, s",
                         containment: "document",
@@ -1129,13 +1175,12 @@
                                 }
                             });
                             isTyping = true;
-                    }
-                    clearTimeout(typingTimer);
-                    typingTimer = setTimeout(function () {
-                        sendStopTypingEvent();
-                    }, stopTypingInterval);
-                    }
-                    else if (event.keyCode === 13) {
+                        }
+                        clearTimeout(typingTimer);
+                        typingTimer = setTimeout(function () {
+                            sendStopTypingEvent();
+                        }, stopTypingInterval);
+                    } else if (event.keyCode === 13) {
                         clearTimeout(typingTimer)
                         sendStopTypingEvent()
                     }
@@ -1160,12 +1205,12 @@
                         if ($('.text-as-password').val().length > 0) {
                             var message = $('.text-as-password').val();
                             var messageCopy = $('.text-as-password').val();
-                            if(KoreSDK.chatConfig.piiReductionChar){
+                            if (KoreSDK.chatConfig.piiReductionChar) {
                                 var piiReductionChar = KoreSDK.chatConfig.piiReductionChar;
                                 message = piiReductionChar + message + piiReductionChar;
                                 var renderMessage = messageCopy.replace(/\w/g, "*");
                                 me.sendMessage($('.chatInputBox').text(message), renderMessage);
-                            }else{
+                            } else {
                                 var _renderMessage = messageCopy.replace(/[^\w\s]/gi, '*');
                                 _renderMessage = _renderMessage.replace(/\w/g, "*");
                                 me.sendMessage($('.chatInputBox').text(message), _renderMessage);
@@ -1174,7 +1219,7 @@
                             KoreSDK.chatConfig.piiReductionChar = '';
                             $('.text-as-password').val('');
                             $('.text-as-password').css('display', 'none');
-                            $('.chatInputBox').css('display','block');
+                            $('.chatInputBox').css('display', 'block');
                         }
                     }
                 });
@@ -1229,8 +1274,7 @@
 
                         me.sendMessage(_this, attachmentInfo);
                         return;
-                    }
-                    else if (event.keyCode === 27) {
+                    } else if (event.keyCode === 27) {
                         _escPressed++;
                         if (_escPressed > 1) {
                             _escPressed = 0;
@@ -1303,7 +1347,7 @@
                     } else {
                         alert("Sorry, the file you tried to attach is not supported. Please attach a valid pdf or image file");
                     }
-                  //  cnvertFiles(this, file);
+                    //  cnvertFiles(this, file);
                     function checkForFileValidation(file) {
                         var workbenchAllowedFileTypes = [".pdf", ".jpg", ".jpeg", ".jpe", ".jig", ".jfif", ".jfi", ".heif", ".png", ".img", ".webp"];
                         var extension = file.name.substring(file.name.lastIndexOf('.'));
@@ -1333,12 +1377,12 @@
                     var _footerContainer = $(me.config.container).find('.kore-chat-footer');
                     me.sendMessage(_footerContainer.find('.chatInputBox'));
                 });
-                _chatContainer.off('click','.notificationTemplate .btn-notification .link').on('click','.notificationTemplate .btn-notification .link',function(e){
-                    var _innerText= $(this).attr('data-value');
+                _chatContainer.off('click', '.notificationTemplate .btn-notification .link').on('click', '.notificationTemplate .btn-notification .link', function (e) {
+                    var _innerText = $(this).attr('data-value');
                     // me.sendMessage($('.chatInputBox').text('_innerText'), _innerText);
                     $('.chatInputBox').text(_innerText);
                     // var _innerText = ($(this)[0] && $(this)[0].innerText) ? $(this)[0].innerText.trim():"" || ($(this) && $(this).attr('data-value'))?$(this).attr('data-value').trim():"";
-                    me.sendMessage($('.chatInputBox'),_innerText);
+                    me.sendMessage($('.chatInputBox'), _innerText);
                 });
 
                 _chatContainer.off('click', 'li a').on('click', 'li a', function (e) {
@@ -1347,31 +1391,32 @@
                     var _trgt = $(this).attr('target');
                     var msgDataText = $(event.currentTarget).closest('span.simpleMsg').attr('msgData') || '';
                     var msgData;
-                    if(msgDataText){
+                    if (msgDataText) {
                         try {
-                         msgData = JSON.parse(msgDataText);
+                            msgData = JSON.parse(msgDataText);
                         } catch (err) {
-        
+
                         }
                     }
-                    if(msgData && msgData.message && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.formData){
+                    if (msgData && msgData.message && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.formData) {
                         me.renderWebForm(msgData);
                     } else if (_trgt === "_self") {
-                        callListener("provideVal", { link: a_link });
+                        callListener("provideVal", {
+                            link: a_link
+                        });
                         return;
                     }
                     if (me.config.allowIframe === true) {
-                         var popupHtml = $(me.getChatTemplate("iframe")).tmpl({
+                        var popupHtml = $(me.getChatTemplate("iframe")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
                             "link_url": url
                         });
-                         popupHtml[0].onload = function(iFrameEvent){
+                        popupHtml[0].onload = function (iFrameEvent) {
                             console.log(iFrameEvent);
-                         }
-                         openModal(popupHtml[0],true);
-                    }
-                    else {
+                        }
+                        openModal(popupHtml[0], true);
+                    } else {
                         window.open(a_link, "_blank");
                     }
                 });
@@ -1385,24 +1430,24 @@
                     if (type == "postback" || type == "text") {
                         $('.chatInputBox').text($(this).attr('value') || $(this).attr('actual-value'));
                         //var _innerText = $(this)[0].innerText.trim() || $(this).attr('data-value').trim();
-                        if($('.quickReply') && $('.quickReply').length){
+                        if ($('.quickReply') && $('.quickReply').length) {
                             var _innerText = $(this).attr('actual-value');
-			   // _innerText = toTitleCase(_innerText);
+                            // _innerText = toTitleCase(_innerText);
                         } else {
-                            var _innerText = ($(this)[0] && $(this)[0].innerText) ? $(this)[0].innerText.trim():"" || ($(this) && $(this).attr('data-value'))?$(this).attr('data-value').trim():"";
+                            var _innerText = ($(this)[0] && $(this)[0].innerText) ? $(this)[0].innerText.trim() : "" || ($(this) && $(this).attr('data-value')) ? $(this).attr('data-value').trim() : "";
                         }
                         me.sendMessage($('.chatInputBox'), _innerText);
                     } else if (type == "url" || type == "web_url") {
-                        if($(this).attr('msgData')!==undefined){
+                        if ($(this).attr('msgData') !== undefined) {
                             var msgData;
                             try {
                                 msgData = JSON.parse($(this).attr('msgData'));
-                               } catch (err) {
-               
-                             }
-                            if(msgData && msgData.message && msgData.message[0].component && (msgData.message[0].component.formData || (msgData.message[0].component.payload &&  msgData.message[0].component.payload.formData))){
-                                if(msgData.message[0].component.formData){
-                                   msgData.message[0].component.payload.formData = msgData.message[0].component.formData;
+                            } catch (err) {
+
+                            }
+                            if (msgData && msgData.message && msgData.message[0].component && (msgData.message[0].component.formData || (msgData.message[0].component.payload && msgData.message[0].component.payload.formData))) {
+                                if (msgData.message[0].component.formData) {
+                                    msgData.message[0].component.payload.formData = msgData.message[0].component.formData;
                                 }
                                 me.renderWebForm(msgData);
                                 return;
@@ -1426,19 +1471,19 @@
                     }
 
                     if (e.currentTarget.classList && e.currentTarget.classList.length > 0 && e.currentTarget.classList[0] === 'checkboxBtn') {
-                        if(e.currentTarget.classList && e.currentTarget.classList.length > 0 && e.currentTarget.classList[1] && e.currentTarget.classList[1] === 'cancel-btn'){
+                        if (e.currentTarget.classList && e.currentTarget.classList.length > 0 && e.currentTarget.classList[1] && e.currentTarget.classList[1] === 'cancel-btn') {
                             var checkboxSelection = $(e.currentTarget.parentElement.parentElement).find('.checkInput:checked')
                             var selectedValue = [];
                             var toShowText = [];
                             for (var i = 0; i < checkboxSelection.length; i++) {
                                 $(checkboxSelection[i]).prop("checked", false);
                             }
-                            me.sendMessage(   $('.chatInputBox').text($(e.currentTarget).attr('value')),$(e.currentTarget).attr('title'));
-                            if($(e.currentTarget).closest('.kore-action-sheet')){
+                            me.sendMessage($('.chatInputBox').text($(e.currentTarget).attr('value')), $(e.currentTarget).attr('title'));
+                            if ($(e.currentTarget).closest('.kore-action-sheet')) {
                                 bottomSliderAction('hide');
                             }
 
-                        }else{
+                        } else {
                             var checkboxSelection = $(e.currentTarget.parentElement.parentElement).find('.checkInput:checked')
                             var selectedValue = [];
                             var toShowText = [];
@@ -1452,20 +1497,20 @@
                             } else {
                                 $('.chatInputBox').text($(this).attr('title'));
                             }
-                            me.sendMessage($('.chatInputBox'),toShowText.toString());
-                            if($(e.currentTarget).closest('.kore-action-sheet').length){
+                            me.sendMessage($('.chatInputBox'), toShowText.toString());
+                            if ($(e.currentTarget).closest('.kore-action-sheet').length) {
                                 bottomSliderAction('hide');
                             }
                         }
 
-                    }   
+                    }
                     if (e.currentTarget.classList && e.currentTarget.classList.length > 0 && e.currentTarget.classList[0] === 'quickReply') {
                         var _parentQuikReplyEle = e.currentTarget.parentElement.parentElement;
                         var _leftIcon = _parentQuikReplyEle.parentElement.parentElement.querySelectorAll('.quickreplyLeftIcon');
                         var _rightIcon = _parentQuikReplyEle.parentElement.parentElement.querySelectorAll('.quickreplyRightIcon');
                         setTimeout(function () {
                             _parentQuikReplyEle.parentElement.parentElement.getElementsByClassName('user-account')[0].classList.remove('marginT50');
-                            if((_leftIcon && _leftIcon.length) || (_rightIcon && _rightIcon.length) ){
+                            if ((_leftIcon && _leftIcon.length) || (_rightIcon && _rightIcon.length)) {
                                 _parentQuikReplyEle.parentElement.parentElement.removeChild(_leftIcon[0]);
                                 _parentQuikReplyEle.parentElement.parentElement.removeChild(_rightIcon[0]);
                             }
@@ -1563,9 +1608,9 @@
                     }
                 });*/
 
-                  // dateClockPickers();
+                // dateClockPickers();
                 if (window.KorePickers) {
-                    var pickerConfig={
+                    var pickerConfig = {
                         chatWindowInstance: me,
                         chatConfig: me.config,
                     }
@@ -1634,9 +1679,9 @@
                 _chatContainer.off('click', '.minimized').on('click', '.minimized,.minimized-title', function (event) {
                     _chatContainer.removeClass("minimize");
                     me.minimized = false;
-                    if(me.skipedInit){
-                        bot.init(me.config.botOptions,me.config.messageHistoryLimit);
-                        me.skipedInit=false;
+                    if (me.skipedInit) {
+                        bot.init(me.config.botOptions, me.config.messageHistoryLimit);
+                        me.skipedInit = false;
                     }
                     /*_chatContainer.draggable({
                         handle: _chatContainer.find(".kore-chat-header .header-title"),
@@ -1656,13 +1701,13 @@
                 _chatContainer.off('click', '.reload-btn').on('click', '.reload-btn', function (event) {
                     $(this).addClass("disabled").prop('disabled', true);
                     $(".close-btn").addClass("disabled").prop('disabled', true);
-                    setTimeout(function(){
+                    setTimeout(function () {
                         // if(customData && customData.isReconnect){
                         //     me.resetWindow(true);
                         //     //me.defaultWelcomeMsg();
                         // }else{
-                            me.resetWindow();
-                            //me.defaultWelcomeMsg();
+                        me.resetWindow();
+                        //me.defaultWelcomeMsg();
                         // }
                     });
                     $('.recordingMicrophone').trigger('click');
@@ -1679,25 +1724,24 @@
                             cancelTTSConnection();
                             isTTSOn = false;
                             $('#ttspeaker')[0].pause();
-                            if(_ttsInterface && _ttsInterface ==="webapi"){
+                            if (_ttsInterface && _ttsInterface === "webapi") {
                                 var synth = window.speechSynthesis;
                                 synth.pause();
-                             }else if (_ttsInterface === 'awspolly') {
-                                if (isTTSOn ===false) {
+                            } else if (_ttsInterface === 'awspolly') {
+                                if (isTTSOn === false) {
                                     // isTTSOn = false;
                                     gainNode.gain.value = 0; // 10 %
                                     $('.ttspeakerDiv').addClass('ttsOff');
                                 }
                             }
                             $('.ttspeakerDiv').addClass('ttsOff');
-                        } 
-                        else {
-                            if(_ttsInterface && _ttsInterface==="webapi"){
+                        } else {
+                            if (_ttsInterface && _ttsInterface === "webapi") {
                                 _ttsConnection = speakWithWebAPI();
- 
-                            }else if(_ttsInterface &&_ttsInterface === 'awspolly'){
+
+                            } else if (_ttsInterface && _ttsInterface === 'awspolly') {
                                 gainNode.gain.value = 1
-                            }else{
+                            } else {
                                 _ttsConnection = createSocketForTTS();
                             }
                             isTTSOn = true;
@@ -1705,7 +1749,7 @@
                         }
                     }
                 });
-                
+
                 bot.on("open", function (response) {
                     accessToken = me.config.botOptions.accessToken;
                     var _chatInput = _chatContainer.find('.kore-chat-footer .chatInputBox');
@@ -1717,8 +1761,8 @@
                             $('.disableFooter').removeClass('disableFooter');
                         });
                     }
-                    if(!me.config.botOptions._reconnecting){
-                       // me.defaultWelcomeMsg();
+                    if (!me.config.botOptions._reconnecting) {
+                        // me.defaultWelcomeMsg();
                     }
                 });
 
@@ -1743,109 +1787,109 @@
                             if (tempData.message[0].component && tempData.message[0].component.payload && tempData.message[0].component.payload.text) {
                                 tempData.message[0].cInfo.body = tempData.message[0].component.payload.text;
                             }
-                            if(tempData.message[0].component && tempData.message[0].component.payload && (tempData.message[0].component.payload.videoUrl || tempData.message[0].component.payload.audioUrl)){
+                            if (tempData.message[0].component && tempData.message[0].component.payload && (tempData.message[0].component.payload.videoUrl || tempData.message[0].component.payload.audioUrl)) {
                                 tempData.message[0].cInfo.body = tempData.message[0].component.payload.text || "";
                             }
                         }
                         if (tempData.message[0].component && tempData.message[0].component.payload && tempData.message[0].component.payload.text) {
                             tempData.message[0].cInfo.body = tempData.message[0].component.payload.text;
-                            if(tempData.message[0].cInfo.body.indexOf("###show_account_values###")>-1){
+                            if (tempData.message[0].cInfo.body.indexOf("###show_account_values###") > -1) {
                                 console.log("11111111111", tempData.message[0].component.payload.buttons);
-                                var  dataItems={
-                                   "radioOptions":tempData.message[0].component.payload.buttons/*[
-                                       {
-                                           "title":"Shanmuga",
-                                           "value":"1234 4567 5678 6789",
-                                           "postback": {
-                                               "title": "Transaction Successful",
-                                               "value": "Payment Successful"
-                                             }
-                                       },
-                                       {
-                                           "title":"Madhu",
-                                           "value":"1234 4567 5678 9876",
-                                           "postback": {
-                                               "title": "AccountDetails",
-                                               "value": "AccountData"
-                                             }
-                                       },
-                                       {
-                                           "title":"Madhu",
-                                           "value":"1234 4567 5678 9876",
-                                           "postback": {
-                                               "title": "Get my leave balance",
-                                               "value": "leaveintent"
-                                             }
-                                       },
-                                       {
-                                           "title":"Madhu",
-                                           "value":"1234 4567 5678 9876",
-                                           "postback": {
-                                               "title": "Transaction Successful",
-                                               "value": "leaveintent"
-                                             }
-                                       },
-                                       {
-                                           "title":"Madhu",
-                                           "value":"1234 4567 5678 9876",
-                                           "postback": {
-                                               "title": "AccountDetails",
-                                               "value": "leaveintent"
-                                             }
-                                       },
-                                   ]*/
+                                var dataItems = {
+                                    "radioOptions": tempData.message[0].component.payload.buttons
+                                    /*[
+                                                                           {
+                                                                               "title":"Shanmuga",
+                                                                               "value":"1234 4567 5678 6789",
+                                                                               "postback": {
+                                                                                   "title": "Transaction Successful",
+                                                                                   "value": "Payment Successful"
+                                                                                 }
+                                                                           },
+                                                                           {
+                                                                               "title":"Madhu",
+                                                                               "value":"1234 4567 5678 9876",
+                                                                               "postback": {
+                                                                                   "title": "AccountDetails",
+                                                                                   "value": "AccountData"
+                                                                                 }
+                                                                           },
+                                                                           {
+                                                                               "title":"Madhu",
+                                                                               "value":"1234 4567 5678 9876",
+                                                                               "postback": {
+                                                                                   "title": "Get my leave balance",
+                                                                                   "value": "leaveintent"
+                                                                                 }
+                                                                           },
+                                                                           {
+                                                                               "title":"Madhu",
+                                                                               "value":"1234 4567 5678 9876",
+                                                                               "postback": {
+                                                                                   "title": "Transaction Successful",
+                                                                                   "value": "leaveintent"
+                                                                                 }
+                                                                           },
+                                                                           {
+                                                                               "title":"Madhu",
+                                                                               "value":"1234 4567 5678 9876",
+                                                                               "postback": {
+                                                                                   "title": "AccountDetails",
+                                                                                   "value": "leaveintent"
+                                                                                 }
+                                                                           },
+                                                                       ]*/
                                 }
-                                korePicker.showradioOptionsPicker(dataItems); 
+                                korePicker.showradioOptionsPicker(dataItems);
                             }
-                           if(tempData.message[0].component.payload.template_type=="daterange"){
+                            if (tempData.message[0].component.payload.template_type == "daterange") {
                                 tempData.message[0].cInfo.body = tempData.message[0].component.payload.text_message;
-                                korePicker.pickerSubconfig.dateRangeConfig.format=tempData.message[0].component.payload.format;
-                                korePicker.pickerSubconfig.dateRangeConfig.startDate=tempData.message[0].component.payload.startDate;
-                                korePicker.pickerSubconfig.dateRangeConfig.endDate=tempData.message[0].component.payload.endDate;
-                                if(tempData.message[0].component.payload.title){
-                                    korePicker.pickerSubconfig.daterangepicker.title=tempData.message[0].component.payload.title;
+                                korePicker.pickerSubconfig.dateRangeConfig.format = tempData.message[0].component.payload.format;
+                                korePicker.pickerSubconfig.dateRangeConfig.startDate = tempData.message[0].component.payload.startDate;
+                                korePicker.pickerSubconfig.dateRangeConfig.endDate = tempData.message[0].component.payload.endDate;
+                                if (tempData.message[0].component.payload.title) {
+                                    korePicker.pickerSubconfig.daterangepicker.title = tempData.message[0].component.payload.title;
                                 }
                                 $('.typingIndicatorContent').css('display', 'block');
                                 korePicker.showDateRangePicker(korePicker.mainConfig);
                             }
-                            if(tempData.message[0].component.payload.template_type=="dateTemplate"){
+                            if (tempData.message[0].component.payload.template_type == "dateTemplate") {
                                 tempData.message[0].cInfo.body = tempData.message[0].component.payload.text_message;
-                                korePicker.pickerSubconfig.dateConfig.format=tempData.message[0].component.payload.format;
-                                korePicker.pickerSubconfig.dateConfig.startDate=tempData.message[0].component.payload.startDate;
-                                korePicker.pickerSubconfig.dateConfig.showdueDate=tempData.message[0].component.payload.showdueDate;
-                                korePicker.pickerSubconfig.dateConfig.endDate=tempData.message[0].component.payload.endDate;
-                                korePicker.pickerSubconfig.dateConfig.selectedDate="Selected Date";
-                                if(tempData.message[0].component.payload.showdueDate){
-                                
-                                    korePicker.pickerSubconfig.dateConfig.paymentDue="Payment Due Date";
-                                    if(tempData.message[0].component.payload.paymentDue){
-                                        korePicker.pickerSubconfig.dateConfig.paymentDue=tempData.message[0].component.payload.paymentDue;
+                                korePicker.pickerSubconfig.dateConfig.format = tempData.message[0].component.payload.format;
+                                korePicker.pickerSubconfig.dateConfig.startDate = tempData.message[0].component.payload.startDate;
+                                korePicker.pickerSubconfig.dateConfig.showdueDate = tempData.message[0].component.payload.showdueDate;
+                                korePicker.pickerSubconfig.dateConfig.endDate = tempData.message[0].component.payload.endDate;
+                                korePicker.pickerSubconfig.dateConfig.lang = tempData.message[0].component.payload.lang;
+                                korePicker.pickerSubconfig.dateConfig.selectedDate = "Selected Date";
+                                if (tempData.message[0].component.payload.showdueDate) {
+
+                                    korePicker.pickerSubconfig.dateConfig.paymentDue = "Payment Due Date";
+                                    if (tempData.message[0].component.payload.paymentDue) {
+                                        korePicker.pickerSubconfig.dateConfig.paymentDue = tempData.message[0].component.payload.paymentDue;
                                     }
                                 }
-                                
-                                if(tempData.message[0].component.payload.title){
-                                    korePicker.pickerSubconfig.datepicker.title=tempData.message[0].component.payload.title;
+
+                                if (tempData.message[0].component.payload.title) {
+                                    korePicker.pickerSubconfig.datepicker.title = tempData.message[0].component.payload.title;
                                 }
-                                
+
                                 $('.typingIndicatorContent').css('display', 'block');
                                 korePicker.showDatePicker(korePicker.mainConfig);
                             }
-                            if(tempData.message[0].cInfo.body.indexOf('clockPicker')>-1){
+                            if (tempData.message[0].cInfo.body.indexOf('clockPicker') > -1) {
                                 korePicker.showClockPicker(korePicker.mainConfig);
                             }
                         }
                         if (loadHistory && historyLoading) {
                             messagesQueue.push(tempData);
-                        }
-                        else {
+                        } else {
                             if (me.config.supportDelayedMessages) {
                                 me.pushTorenderMessagesQueue(tempData);
                             } else {
                                 me.renderMessage(tempData);
                             }
                         }
-                    }
-                    else if (tempData.from === "self" && tempData.type === "user_message") {
+                    } else if (tempData.from === "self" && tempData.type === "user_message") {
                         var tempmsg = tempData.message;
                         var msgData = {};
                         if (tempmsg && tempmsg.attachments && tempmsg.attachments[0] && tempmsg.attachments[0].fileId) {
@@ -1853,7 +1897,10 @@
                                 'type': "currentUser",
                                 "message": [{
                                     'type': 'text',
-                                    'cInfo': { 'body': tempmsg.body, attachments: tempmsg.attachments },
+                                    'cInfo': {
+                                        'body': tempmsg.body,
+                                        attachments: tempmsg.attachments
+                                    },
                                     'clientMessageId': tempData.id
                                 }],
                                 "createdOn": tempData.id
@@ -1863,7 +1910,9 @@
                                 'type': "currentUser",
                                 "message": [{
                                     'type': 'text',
-                                    'cInfo': { 'body': tempmsg.body },
+                                    'cInfo': {
+                                        'body': tempmsg.body
+                                    },
                                     'clientMessageId': tempData.id
                                 }],
                                 "createdOn": tempData.id
@@ -1878,6 +1927,7 @@
                     }
                 });
                 var element = document.querySelector('.droppable');
+
                 function callback(files) {
                     // Here, we simply log the Array of files to the console.
                     if (fileUploaderCounter == 1) {
@@ -1910,7 +1960,7 @@
                 var a = document.createElement("a");
                 a.href = link_url;
                 a.target = "_blank";
-                a.rel = "noopener noreferrer";//for tabnabbing security attack
+                a.rel = "noopener noreferrer"; //for tabnabbing security attack
                 a.click();
             };
 
@@ -1926,7 +1976,7 @@
                 me.bindEvents();
             };
 
-            chatWindow.prototype.defaultWelcomeMsg = function (renderMsg,data) {
+            chatWindow.prototype.defaultWelcomeMsg = function (renderMsg, data) {
                 var me = this;
                 me.config.botOptions._reconnecting = true;
                 var _bodyContainer = $(me.config.chatContainer).find('.kore-chat-body');
@@ -1937,7 +1987,9 @@
                     'type': "currentUser",
                     "message": [{
                         'type': 'text',
-                        'cInfo': { 'body': "BotNotifications" },
+                        'cInfo': {
+                            'body': "BotNotifications"
+                        },
                         'clientMessageId': clientMessageId
                     }],
                     "createdOn": clientMessageId
@@ -1945,16 +1997,22 @@
                 var messageToBot = {};
                 messageToBot["clientMessageId"] = clientMessageId;
                 if (Object.keys(attachmentInfo).length > 0 && chatInput.text().trim().length) {
-                    messageToBot["message"] = { body: chatInput.text().trim(), attachments: [attachmentInfo] };
+                    messageToBot["message"] = {
+                        body: chatInput.text().trim(),
+                        attachments: [attachmentInfo]
+                    };
                 } else if (Object.keys(attachmentInfo).length > 0) {
-                    messageToBot["message"] = { attachments: [attachmentInfo] };
-                }
-                else {
-                    messageToBot["message"] = { body: "BotNotifications" };
+                    messageToBot["message"] = {
+                        attachments: [attachmentInfo]
+                    };
+                } else {
+                    messageToBot["message"] = {
+                        body: "BotNotifications"
+                    };
                 }
                 messageToBot["resourceid"] = '/bot.message';
-                if(renderMsg && typeof renderMsg==='string'){
-                    messageToBot["message"].renderMsg=renderMsg;
+                if (renderMsg && typeof renderMsg === 'string') {
+                    messageToBot["message"].renderMsg = renderMsg;
                 }
                 if (data && data.customdata) {
                     messageToBot["message"].customdata = data.customdata;
@@ -1962,30 +2020,29 @@
                 if (data && data.nlmeta) {
                     messageToBot["message"].nlmeta = data.nlmeta;
                 }
-                if($('.isDebugConsolePanelOpen').length > 0) {
+                if ($('.isDebugConsolePanelOpen').length > 0) {
                     messageToBot["isDebugging"] = true;
-                }
-                else{
+                } else {
                     messageToBot["isDebugging"] = false;
                 }
                 attachmentInfo = {};
                 bot.sendMessage(messageToBot, function messageSent(err) {
                     if (err && err.message) {
                         setTimeout(function () {
-                            $('#msg_' + clientMessageId).find('.messageBubble').append('<div class="errorMsg">'+i18n.i18nString('sendFailed_please_resend')+'</div>');
+                            $('#msg_' + clientMessageId).find('.messageBubble').append('<div class="errorMsg">' + i18n.i18nString('sendFailed_please_resend') + '</div>');
                         }, 350);
                     }
                 });
             }
 
-            chatWindow.prototype.sendMessage = function (chatInput, renderMsg,msgObject,isMessageTobeHidden) {
+            chatWindow.prototype.sendMessage = function (chatInput, renderMsg, msgObject, isMessageTobeHidden) {
                 var me = this;
                 if (chatInput.text().trim() === "" && $('.attachment').html().trim().length == 0) {
                     return;
                 }
-                if(msgObject && msgObject.message && msgObject.message.length && msgObject.message[0]&& msgObject.message[0].component&& msgObject.message[0].component.payload && msgObject.message[0].component.payload.ignoreCheckMark){
-                    var ignoreCheckMark=msgObject.message[0].component.payload.ignoreCheckMark;
-                    }
+                if (msgObject && msgObject.message && msgObject.message.length && msgObject.message[0] && msgObject.message[0].component && msgObject.message[0].component.payload && msgObject.message[0].component.payload.ignoreCheckMark) {
+                    var ignoreCheckMark = msgObject.message[0].component.payload.ignoreCheckMark;
+                }
                 if (me.config.allowLocation) {
                     bot.fetchUserLocation();
                 }
@@ -2018,7 +2075,9 @@
                         'type': "currentUser",
                         "message": [{
                             'type': 'text',
-                            'cInfo': { 'body': chatInput.text() },
+                            'cInfo': {
+                                'body': chatInput.text()
+                            },
                             'clientMessageId': clientMessageId
                         }],
                         "createdOn": clientMessageId
@@ -2028,29 +2087,35 @@
                 var messageToBot = {};
                 messageToBot["clientMessageId"] = clientMessageId;
                 if (Object.keys(attachmentInfo).length > 0 && chatInput.text().trim().length) {
-                    messageToBot["message"] = { body: chatInput.text().trim(), attachments: [attachmentInfo] };
+                    messageToBot["message"] = {
+                        body: chatInput.text().trim(),
+                        attachments: [attachmentInfo]
+                    };
                 } else if (Object.keys(attachmentInfo).length > 0) {
-                    messageToBot["message"] = { attachments: [attachmentInfo] };
-                }
-                else {
-                    messageToBot["message"] = { body: chatInput.text().trim() };
+                    messageToBot["message"] = {
+                        attachments: [attachmentInfo]
+                    };
+                } else {
+                    messageToBot["message"] = {
+                        body: chatInput.text().trim()
+                    };
                 }
                 messageToBot["resourceid"] = '/bot.message';
 
                 if (renderMsg && typeof renderMsg === 'string') {
                     messageToBot["message"].renderMsg = renderMsg;
                 }
-                if(msgObject && msgObject.customdata){
-                    messageToBot["message"].customdata=msgObject.customdata;
+                if (msgObject && msgObject.customdata) {
+                    messageToBot["message"].customdata = msgObject.customdata;
                 }
-                if(msgObject && msgObject.nlmeta){
-                    messageToBot["message"].nlmeta=msgObject.nlmeta;
+                if (msgObject && msgObject.nlmeta) {
+                    messageToBot["message"].nlmeta = msgObject.nlmeta;
                 }
                 attachmentInfo = {};
                 bot.sendMessage(messageToBot, function messageSent(err) {
                     if (err && err.message) {
                         setTimeout(function () {
-                            $('.kore-chat-window [data-time="'+clientMessageId+'"]').find('.messageBubble').append('<div class="errorMsg">Send Failed. Please resend.</div>');
+                            $('.kore-chat-window [data-time="' + clientMessageId + '"]').find('.messageBubble').append('<div class="errorMsg">Send Failed. Please resend.</div>');
                         }, 350);
                     }
                 });
@@ -2063,18 +2128,21 @@
                     $('.typingIndicatorContent').css('display', 'none');
                 }, 10000);
                 if (renderMsg && typeof renderMsg === 'string') {
-                   //msgData.message[0].cInfo.body = messageToBot["message"].body;
-		   msgData.message[0].cInfo.body = renderMsg;
+                    //msgData.message[0].cInfo.body = messageToBot["message"].body;
+                    msgData.message[0].cInfo.body = renderMsg;
                 }
-                msgData.message[0].cInfo.ignoreCheckMark=ignoreCheckMark;
-                if(!isMessageTobeHidden){
+                msgData.message[0].cInfo.ignoreCheckMark = ignoreCheckMark;
+                if (!isMessageTobeHidden) {
                     me.renderMessage(msgData);
                 }
             };
 
             chatWindow.prototype.renderMessage = function (msgData) {
-                var me = this, messageHtml = '', extension = '', _extractedFileName = '';
-                msgData.createdOnTimemillis=new Date(msgData.createdOn).valueOf();
+                var me = this,
+                    messageHtml = '',
+                    extension = '',
+                    _extractedFileName = '';
+                msgData.createdOnTimemillis = new Date(msgData.createdOn).valueOf();
                 customTemplateObj.helpers = helpers;
                 customTemplateObj.extension = extension;
                 graphLibGlob = me.config.graphLib || "d3";
@@ -2088,8 +2156,7 @@
                             $('.typingIndicatorContent').css('display', 'none');
                         }
                     }, 500);
-                }
-                else {
+                } else {
                     waiting_for_message = false;
                 }
                 var _chatContainer = $(me.config.chatContainer).find('.chat-container');
@@ -2111,20 +2178,17 @@
                             'helpers': helpers,
                             'extension': extension
                         });
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "wait_for_response") {// to show typing indicator until next response receive
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "wait_for_response") { // to show typing indicator until next response receive
                         waiting_for_message = true;
                         $('.typingIndicatorContent').css('display', 'block');
                         return;
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "list") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "list") {
                         messageHtml = $(me.getChatTemplate("templatelist")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
                             'extension': extension
                         });
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "quick_replies") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "quick_replies") {
                         messageHtml = $(me.getChatTemplate("templatequickreply")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
@@ -2135,8 +2199,7 @@
                             evt.initEvent('resize', true, false);
                             window.dispatchEvent(evt);
                         }, 150);
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "carousel") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "carousel") {
                         messageHtml = $(me.getChatTemplate("carouselTemplate")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
@@ -2165,24 +2228,21 @@
                                 scrollTop: _chatContainer.prop("scrollHeight")
                             }, 0);
                         });
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && (msgData.message[0].component.type == "image" || msgData.message[0].component.type == "audio" || msgData.message[0].component.type == "video" || msgData.message[0].component.type == "link")) {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && (msgData.message[0].component.type == "image" || msgData.message[0].component.type == "audio" || msgData.message[0].component.type == "video" || msgData.message[0].component.type == "link")) {
                         messageHtml = $(me.getChatTemplate("templateAttachment")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
                             'extension': extension,
                             'extractedFileName': _extractedFileName
                         });
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "Notification") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "Notification") {
                         messageHtml = $(me.getChatTemplate("NotificationTmpl")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
                             'extension': extension
                         });
                         $(messageHtml).data(msgData);
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "table") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "table") {
                         messageHtml = $(me.getChatTemplate("tableChartTemplate")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
@@ -2219,8 +2279,7 @@
                             }
                         }, 350);
 
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "mini_table") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "mini_table") {
                         if (msgData.message[0].component.payload.layout == "horizontal") {
                             messageHtml = $(me.getChatTemplate("miniTableHorizontalTemplate")).tmpl({
                                 'msgData': msgData,
@@ -2256,24 +2315,19 @@
                                 'extension': extension
                             });
                         }
-                    }
-
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "multi_select") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "multi_select") {
                         messageHtml = $(this.getChatTemplate("checkBoxesTemplate")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
                             'extension': extension
                         });
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "like_dislike") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "like_dislike") {
                         messageHtml = $(this.getChatTemplate("likeDislikeTemplate")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
                             'extension': extension
                         });
-                    }
-
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "piechart") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "piechart") {
                         messageHtml = $(me.getChatTemplate("pieChartTemplate")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
@@ -2282,14 +2336,20 @@
                         //storing the type of the graph to be displayed.
                         if (me.config.graphLib === "google") {
                             setTimeout(function () {
-                                google.charts.load('current', { 'packages': ['corechart'] });
+                                google.charts.load('current', {
+                                    'packages': ['corechart']
+                                });
                                 google.charts.setOnLoadCallback(drawChart);
+
                                 function drawChart() {
                                     var data = new google.visualization.DataTable();
                                     data.addColumn('string', 'Task');
                                     data.addColumn('number', 'Hours per Day');
                                     if (msgData.message[0].component.payload.elements && msgData.message[0].component.payload.elements[0].displayValue) {
-                                        data.addColumn({ type: 'string', role: 'tooltip' });
+                                        data.addColumn({
+                                            type: 'string',
+                                            role: 'tooltip'
+                                        });
                                     }
                                     var pieChartData = [];
                                     var piechartElements = msgData.message[0].component.payload.elements;
@@ -2327,13 +2387,17 @@
                                             options.pieHole = 0.6;
                                             options.pieSliceTextStyle.color = "black";
                                             options.legend.position = "none";
-                                        }
-                                        else if (msgData.message[0].component.payload.pie_type === "donut_legend") {
+                                        } else if (msgData.message[0].component.payload.pie_type === "donut_legend") {
                                             options.pieHole = 0.6;
                                             options.pieSliceTextStyle.color = "black";
                                         }
                                     }
-                                    var _piechartObj = { 'id': 'piechart' + msgData.messageId, 'data': data, 'options': options, 'type': 'piechart' };
+                                    var _piechartObj = {
+                                        'id': 'piechart' + msgData.messageId,
+                                        'data': data,
+                                        'options': options,
+                                        'type': 'piechart'
+                                    };
                                     available_charts.push(_piechartObj);
                                     var container = document.getElementById('piechart' + msgData.messageId);
                                     var chart = new google.visualization.PieChart(container);
@@ -2341,8 +2405,7 @@
                                     //window.PieChartCount = window.PieChartCount + 1;
                                 }
                             }, 150);
-                        }
-                        else if (graphLibGlob === "d3") {
+                        } else if (graphLibGlob === "d3") {
                             if (msgData.message[0].component.payload.pie_type === undefined) {
                                 msgData.message[0].component.payload.pie_type = 'regular';
                             }
@@ -2355,23 +2418,33 @@
                                 dimens.legendSpacing = 2.4;
                                 if (msgData.message[0].component.payload.pie_type === "regular") {
                                     setTimeout(function () {
-                                        var _piechartObj = { 'id': 'piechart' + msgData.messageId, 'data': msgData, 'type': 'regular' };
+                                        var _piechartObj = {
+                                            'id': 'piechart' + msgData.messageId,
+                                            'data': msgData,
+                                            'type': 'regular'
+                                        };
                                         available_charts.push(_piechartObj);
                                         KoreGraphAdapter.drawD3Pie(msgData, dimens, '#piechart' + msgData.messageId, 12);
                                         //window.PieChartCount = window.PieChartCount + 1;
                                     }, 150);
-                                }
-                                else if (msgData.message[0].component.payload.pie_type === "donut") {
+                                } else if (msgData.message[0].component.payload.pie_type === "donut") {
                                     setTimeout(function () {
-                                        var _piechartObj = { 'id': 'piechart' + msgData.messageId, 'data': msgData, 'type': 'donut' };
+                                        var _piechartObj = {
+                                            'id': 'piechart' + msgData.messageId,
+                                            'data': msgData,
+                                            'type': 'donut'
+                                        };
                                         available_charts.push(_piechartObj);
                                         KoreGraphAdapter.drawD3PieDonut(msgData, dimens, '#piechart' + msgData.messageId, 12, 'donut');
                                         //window.PieChartCount = window.PieChartCount + 1;
                                     }, 150);
-                                }
-                                else if (msgData.message[0].component.payload.pie_type === "donut_legend") {
+                                } else if (msgData.message[0].component.payload.pie_type === "donut_legend") {
                                     setTimeout(function () {
-                                        var _piechartObj = { 'id': 'piechart' + msgData.messageId, 'data': msgData, 'type': 'donut_legend' };
+                                        var _piechartObj = {
+                                            'id': 'piechart' + msgData.messageId,
+                                            'data': msgData,
+                                            'type': 'donut_legend'
+                                        };
                                         available_charts.push(_piechartObj);
                                         KoreGraphAdapter.drawD3PieDonut(msgData, dimens, '#piechart' + msgData.messageId, 12, 'donut_legend');
                                         //window.PieChartCount = window.PieChartCount + 1;
@@ -2383,8 +2456,7 @@
                             $('.chat-container').scrollTop($('.chat-container').prop('scrollHeight'));
                             handleChartOnClick();
                         }, 200);
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "barchart") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "barchart") {
                         messageHtml = $(me.getChatTemplate("barchartTemplate")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
@@ -2392,8 +2464,11 @@
                         });
                         if (graphLibGlob === "google") {
                             setTimeout(function () {
-                                google.charts.load('current', { packages: ['corechart', 'bar'] });
+                                google.charts.load('current', {
+                                    packages: ['corechart', 'bar']
+                                });
                                 google.charts.setOnLoadCallback(drawChart);
+
                                 function drawChart() {
                                     var customToolTips = false;
                                     var data = new google.visualization.DataTable();
@@ -2404,7 +2479,10 @@
                                         data.addColumn('number', currEle.title);
                                         //checking for display values ( custom tooltips)
                                         if (currEle.displayValues && currEle.displayValues.length) {
-                                            data.addColumn({ type: 'string', role: 'tooltip' });
+                                            data.addColumn({
+                                                type: 'string',
+                                                role: 'tooltip'
+                                            });
                                             customToolTips = true;
                                         }
                                     }
@@ -2457,7 +2535,9 @@
                                             easing: 'out',
                                             startup: true
                                         },
-                                        bar: { groupWidth: "25%" },
+                                        bar: {
+                                            groupWidth: "25%"
+                                        },
                                         colors: window.chartColors
                                     };
 
@@ -2471,22 +2551,26 @@
                                         options.isStacked = true;
                                         options.bar.groupWidth = "25%";
                                     }
-                                    var _barchartObj = { 'id': 'barchart' + msgData.messageId, 'direction': msgData.message[0].component.payload.direction, 'data': data, 'options': options, 'type': 'barchart' };
+                                    var _barchartObj = {
+                                        'id': 'barchart' + msgData.messageId,
+                                        'direction': msgData.message[0].component.payload.direction,
+                                        'data': data,
+                                        'options': options,
+                                        'type': 'barchart'
+                                    };
                                     available_charts.push(_barchartObj);
                                     var container = document.getElementById('barchart' + msgData.messageId);
                                     var chart = null;
                                     if (msgData.message[0].component.payload.direction === 'vertical') {
                                         chart = new google.visualization.ColumnChart(container);
-                                    }
-                                    else {
+                                    } else {
                                         chart = new google.visualization.BarChart(container);
                                     }
                                     chart.draw(data, options);
                                     //window.barchartCount = window.barchartCount + 1;
                                 }
                             }, 150);
-                        }
-                        else if (graphLibGlob === "d3") {
+                        } else if (graphLibGlob === "d3") {
                             var dimens = {};
                             dimens.outerWidth = 350;
                             dimens.outerHeight = 300;
@@ -2499,36 +2583,48 @@
                             if (msgData.message[0].component.payload.direction === 'horizontal' && !msgData.message[0].component.payload.stacked) {
                                 setTimeout(function () {
                                     dimens.innerWidth = 180;
-                                    var _barchartObj = { 'id': 'Legend_barchart' + msgData.messageId, 'data': msgData, 'type': 'barchart' };
+                                    var _barchartObj = {
+                                        'id': 'Legend_barchart' + msgData.messageId,
+                                        'data': msgData,
+                                        'type': 'barchart'
+                                    };
                                     available_charts.push(_barchartObj);
                                     KoreGraphAdapter.drawD3barHorizontalbarChart(msgData, dimens, '#barchart' + msgData.messageId, 12);
                                     // window.barchartCount = window.barchartCount + 1;
                                 }, 250);
-                            }
-                            else if (msgData.message[0].component.payload.direction === 'vertical' && msgData.message[0].component.payload.stacked) {
+                            } else if (msgData.message[0].component.payload.direction === 'vertical' && msgData.message[0].component.payload.stacked) {
                                 setTimeout(function () {
                                     dimens.outerWidth = 350;
                                     dimens.innerWidth = 270;
-                                    var _barchartObj = { 'id': 'barchart' + msgData.messageId, 'data': msgData, 'type': 'stackedBarchart' };
+                                    var _barchartObj = {
+                                        'id': 'barchart' + msgData.messageId,
+                                        'data': msgData,
+                                        'type': 'stackedBarchart'
+                                    };
                                     available_charts.push(_barchartObj);
                                     KoreGraphAdapter.drawD3barVerticalStackedChart(msgData, dimens, '#barchart' + msgData.messageId, 12);
                                     // window.barchartCount = window.barchartCount + 1;
                                 }, 250);
-                            }
-
-                            else if (msgData.message[0].component.payload.direction === 'horizontal' && msgData.message[0].component.payload.stacked) {
+                            } else if (msgData.message[0].component.payload.direction === 'horizontal' && msgData.message[0].component.payload.stacked) {
                                 setTimeout(function () {
                                     dimens.innerWidth = 180;
-                                    var _barchartObj = { 'id': 'barchart' + msgData.messageId, 'data': msgData, 'type': 'stackedBarchart' };
+                                    var _barchartObj = {
+                                        'id': 'barchart' + msgData.messageId,
+                                        'data': msgData,
+                                        'type': 'stackedBarchart'
+                                    };
                                     available_charts.push(_barchartObj);
                                     KoreGraphAdapter.drawD3barStackedChart(msgData, dimens, '#barchart' + msgData.messageId, 12);
                                     // window.barchartCount = window.barchartCount + 1;
                                 }, 250);
-                            }
-                            else if (msgData.message[0].component.payload.direction === 'vertical' && !msgData.message[0].component.payload.stacked) {
+                            } else if (msgData.message[0].component.payload.direction === 'vertical' && !msgData.message[0].component.payload.stacked) {
                                 setTimeout(function () {
                                     dimens.innerWidth = 240;
-                                    var _barchartObj = { 'id': 'barchart' + msgData.messageId, 'data': msgData, 'type': 'barchart' };
+                                    var _barchartObj = {
+                                        'id': 'barchart' + msgData.messageId,
+                                        'data': msgData,
+                                        'type': 'barchart'
+                                    };
                                     available_charts.push(_barchartObj);
                                     KoreGraphAdapter.drawD3barChart(msgData, dimens, '#barchart' + msgData.messageId, 12);
                                     // window.barchartCount = window.barchartCount + 1;
@@ -2539,8 +2635,7 @@
                             $('.chat-container').scrollTop($('.chat-container').prop('scrollHeight'));
                             handleChartOnClick();
                         }, 300);
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "linechart") {
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "linechart") {
                         messageHtml = $(me.getChatTemplate("linechartTemplate")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
@@ -2548,8 +2643,11 @@
                         });
                         if (graphLibGlob === "google") {
                             setTimeout(function () {
-                                google.charts.load('current', { packages: ['corechart', 'line'] });
+                                google.charts.load('current', {
+                                    packages: ['corechart', 'line']
+                                });
                                 google.charts.setOnLoadCallback(drawChart);
+
                                 function drawChart() {
                                     var customToolTips = false;
                                     var data = new google.visualization.DataTable();
@@ -2560,7 +2658,10 @@
                                         data.addColumn('number', currEle.title);
                                         //checking for display values ( custom tooltips)
                                         if (currEle.displayValues && currEle.displayValues.length) {
-                                            data.addColumn({ type: 'string', role: 'tooltip' });
+                                            data.addColumn({
+                                                type: 'string',
+                                                role: 'tooltip'
+                                            });
                                             customToolTips = true;
                                         }
                                     }
@@ -2618,7 +2719,12 @@
                                         },
                                         colors: window.chartColors
                                     };
-                                    var lineChartObj = { 'id': 'linechart' + msgData.messageId, 'data': data, 'options': options, 'type': 'linechart' };
+                                    var lineChartObj = {
+                                        'id': 'linechart' + msgData.messageId,
+                                        'data': data,
+                                        'options': options,
+                                        'type': 'linechart'
+                                    };
                                     available_charts.push(lineChartObj);
                                     var container = document.getElementById('linechart' + msgData.messageId);
 
@@ -2627,8 +2733,7 @@
                                     //window.linechartCount = window.linechartCount + 1;
                                 }
                             }, 150);
-                        }
-                        else if (graphLibGlob === "d3") {
+                        } else if (graphLibGlob === "d3") {
                             setTimeout(function () {
                                 var dimens = {};
                                 dimens.outerWidth = 380;
@@ -2637,7 +2742,11 @@
                                 dimens.innerHeight = 250;
                                 dimens.legendRectSize = 15;
                                 dimens.legendSpacing = 4;
-                                var _linechartObj = { 'id': 'linechart' + msgData.messageId, 'data': msgData, 'type': 'linechart' };
+                                var _linechartObj = {
+                                    'id': 'linechart' + msgData.messageId,
+                                    'data': msgData,
+                                    'type': 'linechart'
+                                };
                                 available_charts.push(_linechartObj);
                                 //  KoreGraphAdapter.drawD3lineChart(msgData, dimens, '#linechart'+window.linechartCount, 12);
                                 KoreGraphAdapter.drawD3lineChartV2(msgData, dimens, '#linechart' + msgData.messageId, 12);
@@ -2653,31 +2762,28 @@
                             $('.chat-container').scrollTop($('.chat-container').prop('scrollHeight'));
                             handleChartOnClick();
                         }, 200);
-                    }
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.formData && msgData.message[0].component.payload.formData.renderType==='inline'){
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.formData && msgData.message[0].component.payload.formData.renderType === 'inline') {
                         msgData.renderType = 'inline';
-                        messageHtml = me.renderWebForm(msgData,true);
-                    } 
-                    else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "iframe") {
+                        messageHtml = me.renderWebForm(msgData, true);
+                    } else if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.template_type == "iframe") {
                         var popupHtml = $(me.getChatTemplate("iframe")).tmpl({
                             'msgData': msgData,
                             'helpers': helpers,
-                            "link_url": msgData.message[0].component.link_url    
+                            "link_url": msgData.message[0].component.link_url
                         });
-                        popupHtml[0].onload = function(iFrameEvent){
+                        popupHtml[0].onload = function (iFrameEvent) {
                             console.log(iFrameEvent);
                         }
-                        openModal(popupHtml[0],true);
-                        setTimeout(function(){
+                        openModal(popupHtml[0], true);
+                        setTimeout(function () {
                             var iframe = document.getElementById("iframeModal");
                             var elemt = iframe.contentWindow.document.getElementsByClassName('x-unblu-launcher-button');
                             elemt[0].click();
-                        },7000);
-                    } 
-                    else {
-                        if(KoreSDK.chatConfig.masking){
+                        }, 7000);
+                    } else {
+                        if (KoreSDK.chatConfig.masking) {
                             KoreSDK.chatConfig.masking = false;
-                            if(msgData.type !== "bot_response"){
+                            if (msgData.type !== "bot_response") {
                                 msgData.message[0].cInfo.body = msgData.message[0].cInfo.body.replace(/\w/g, "*");
                             }
                         }
@@ -2687,22 +2793,22 @@
                             'extension': extension
                         });
                     }
-                    if(msgData && msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.masking){
+                    if (msgData && msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.masking) {
                         KoreSDK.chatConfig.masking = true;
-                        if(msgData.message[0].component.payload.piiReductionChar){
-                            KoreSDK.chatConfig.piiReductionChar =  msgData.message[0].component.payload.piiReductionChar;
+                        if (msgData.message[0].component.payload.piiReductionChar) {
+                            KoreSDK.chatConfig.piiReductionChar = msgData.message[0].component.payload.piiReductionChar;
                         }
-                        $('.text-as-password').css('display','block');
+                        $('.text-as-password').css('display', 'block');
                         $('.text-as-password').focus();
-                        $('.chatInputBox').css('display','none');
+                        $('.chatInputBox').css('display', 'none');
                     }
                 }
-                _chatContainer.find('li').attr('aria-live','off');
-                _chatContainer.find('li').attr('aria-hidden','true');//for mac voiceover bug with aria-live
-   
-                if(msgData && msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.sliderView && !msgData.message[0].component.payload.fromHistory){
-                    bottomSliderAction('show',messageHtml);
-                }else{
+                _chatContainer.find('li').attr('aria-live', 'off');
+                _chatContainer.find('li').attr('aria-hidden', 'true'); //for mac voiceover bug with aria-live
+
+                if (msgData && msgData.message[0] && msgData.message[0].component && msgData.message[0].component.payload && msgData.message[0].component.payload.sliderView && !msgData.message[0].component.payload.fromHistory) {
+                    bottomSliderAction('show', messageHtml);
+                } else {
                     //ignore message(msgId) if it is already in viewport                     
                     if ($('.kore-chat-window .chat-container li#' + msgData.messageId).length < 1) {
                         if (msgData.type === "bot_response" && msgData.fromHistorySync) {
@@ -2741,8 +2847,7 @@
                 if (msgData.type === "bot_response" && isTTSOn && isTTSEnabled && !me.minimized && !historyLoading) {
                     if (msgData.message[0] && msgData.message[0].component && msgData.message[0].component.type === "template") {
                         _txtToSpeak = '';
-                    }
-                    else {
+                    } else {
                         try {
                             _txtToSpeak = msgData.message[0].component.payload.text ? msgData.message[0].component.payload.text.replace(/\r?\n/g, ". .") : "";
                             _txtToSpeak = helpers.checkMarkdowns(_txtToSpeak);
@@ -2756,42 +2861,41 @@
                     if (msgData.message[0].component && msgData.message[0].component.payload.speech_hint) {
                         _txtToSpeak = msgData.message[0].component.payload.speech_hint;
                     }
-                    if (_ttsInterface&&_ttsInterface==="webapi") {
+                    if (_ttsInterface && _ttsInterface === "webapi") {
                         _ttsConnection = speakWithWebAPI(_txtToSpeak);
-                    }else if(_ttsInterface && _ttsInterface==="awspolly"){
-                        if(!window.speakTextWithAWSPolly){
+                    } else if (_ttsInterface && _ttsInterface === "awspolly") {
+                        if (!window.speakTextWithAWSPolly) {
                             console.warn("Please uncomment amazon polly files 'plugins/aws-sdk-2.668.0.min.js' and'plugins/kore-aws-polly.js' in index.html");
-                        }else{
+                        } else {
                             speakTextWithAWSPolly(_txtToSpeak);
                         }
 
-                    }else if (!_ttsConnection || (_ttsConnection.readyState && _ttsConnection.readyState !== 1)) {
+                    } else if (!_ttsConnection || (_ttsConnection.readyState && _ttsConnection.readyState !== 1)) {
                         try {
                             _ttsConnection = createSocketForTTS();
                         } catch (e) {
                             console.log(e);
                         }
-                    }
-                    else {
+                    } else {
                         socketSendTTSMessage(_txtToSpeak);
                     }
                 }
-            };                   
-                                    
+            };
+
             chatWindow.prototype.pushTorenderMessagesQueue = function (msgItem) {
                 var me = this;
-                if( !me.renderMessagesQueue){
+                if (!me.renderMessagesQueue) {
                     me.renderMessagesQueue = [];
                 }
                 me.renderMessagesQueue.push(msgItem);
-                if(!me.renderEventLoop){
+                if (!me.renderEventLoop) {
                     me.startRenderEventLoop();
                 }
             }
             chatWindow.prototype.startRenderEventLoop = function () {
                 var me = this;
                 me.msgRenderingProgress = false;
-                me.renderEventLoop=setInterval(function () {
+                me.renderEventLoop = setInterval(function () {
                     console.log("Running Event loop")
                     me.checkForMsgQueue();
                 }, 500);
@@ -2810,11 +2914,11 @@
                         me.msgRenderingProgress = false;
                     }, delay);
                 }
-                if(!me.renderMessagesQueue.length && !me.msgRenderingProgress && me.renderEventLoop){
+                if (!me.renderMessagesQueue.length && !me.msgRenderingProgress && me.renderEventLoop) {
                     clearTimeout(me.renderEventLoop);
-                    me.renderEventLoop=false;
+                    me.renderEventLoop = false;
                 }
-            };    
+            };
 
             chatWindow.prototype.formatMessages = function (msgContainer) {
                 /*adding target to a tags */
@@ -2840,18 +2944,18 @@
 
             (function () {
                 window.onclick = function (event) {
-                  if (!event.target.matches('.dropbtnWidgt')) {
-                    var dropdowns = document.getElementsByClassName("dropdown-contentWidgt");
-                    var i;
-          
-                    for (i = 0; i < dropdowns.length; i++) {
-                      var openDropdown = dropdowns[i];
-          
-                      if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
-                      }
+                    if (!event.target.matches('.dropbtnWidgt')) {
+                        var dropdowns = document.getElementsByClassName("dropdown-contentWidgt");
+                        var i;
+
+                        for (i = 0; i < dropdowns.length; i++) {
+                            var openDropdown = dropdowns[i];
+
+                            if (openDropdown.classList.contains('show')) {
+                                openDropdown.classList.remove('show');
+                            }
+                        }
                     }
-                  }
                 };
             })();
 
@@ -3468,7 +3572,7 @@
                     {{/if}}\
                 </script>';
 
-                var NotificationTemplate='<script id="notification_tmpl" type="tet/x-jqury-tmpl">\
+                var NotificationTemplate = '<script id="notification_tmpl" type="tet/x-jqury-tmpl">\
                     {{if msgData.message}}\
                         <li {{if msgData.type !== "bot_response"}}id="msg_${msgItem.clientMessageId}"{{/if}} class="{{if msgData.type === "bot_response"}}fromOtherUsers{{else}}fromCurrentUser{{/if}} with-icon notification"> \
                             <div class="notificationTemplate">\
@@ -3528,7 +3632,7 @@
                     return listActionSheetTemplate;
                 } else if (tempType === "iframe") {
                     return iframe;
-                } else if(tempType ==="NotificationTmpl"){
+                } else if (tempType === "NotificationTmpl") {
                     return NotificationTemplate;
                 } else {
                     return chatWindowTemplate;
@@ -3573,6 +3677,7 @@
                     _input.appendChild(html);
                 }
             }
+
             function setCaretEnd(_this) {
                 var sel;
                 if (_this && _this.item(0) && _this.item(0).innerText.length) {
@@ -3590,6 +3695,7 @@
                     }
                 }
             }
+
             function strSplit(str) {
                 return (str.split('.'));
             }
@@ -3673,30 +3779,30 @@
                 if ($('body').find('.kore-chat-window').length > 0) {
                     return false;
                 }
-                cfg.chatHistory=this.chatHistory;
-                cfg.handleError=this.showError;
-                if(cfg.widgetSDKInstace){
+                cfg.chatHistory = this.chatHistory;
+                cfg.handleError = this.showError;
+                if (cfg.widgetSDKInstace) {
                     this.addWidgetEvents(cfg);
                 };
                 chatInitialize = new chatWindow(cfg);
-                customTemplateObj = new customTemplate(cfg,chatInitialize);
-                
+                customTemplateObj = new customTemplate(cfg, chatInitialize);
+
                 return this;
             };
-            
+
             this.addWidgetEvents = function (cfg) {
                 if (cfg) {
                     var wizSDK = cfg.widgetSDKInstace;
                     wizSDK.events.onPostback = function (data) {
-                            $('.chatInputBox').text(data.payload);
-                            chatInitialize.sendMessage($('.chatInputBox'), data.utterance, data);
+                        $('.chatInputBox').text(data.payload);
+                        chatInitialize.sendMessage($('.chatInputBox'), data.utterance, data);
                     };
                 }
             };
-            
-            this.setWidgetInstance=function(widgetSDKInstace){
-                if(widgetSDKInstace){
-                    chatInitialize.config.widgetSDKInstace=widgetSDKInstace;
+
+            this.setWidgetInstance = function (widgetSDKInstace) {
+                if (widgetSDKInstace) {
+                    chatInitialize.config.widgetSDKInstace = widgetSDKInstace;
                     this.addWidgetEvents(chatInitialize.config);
                 }
             }
@@ -3715,7 +3821,7 @@
             this.initToken = function (options) {
                 assertionToken = "bearer " + options.accessToken;
             };
-                      
+
             this.hideError = function () {
                 $('.errorMsgBlock').removeClass('showError');
             }
@@ -3732,8 +3838,8 @@
                 }
             }
             this.botDetails = function (response, botInfo) {
-                if(response){
-                    if(response.botName !== ""){
+                if (response) {
+                    if (response.botName !== "") {
                         chatContainerConfig.config.chatTitle = response.botName;
                         $('.kore-chat-header .header-title').html(chatContainerConfig.config.chatTitle).attr('title', chatContainerConfig.config.chatTitle);
                     } else {
@@ -3742,88 +3848,88 @@
                     }
                     var cssPrefix = "--custom-";
                     var cssBrandingVariables = {
-                        "botchatBgColor":"bot-chat-bubble-background-color",
-                        "botchatTextColor":"bot-chat-bubble-text-color",
-                        "buttonActiveBgColor":"button-active-background-color",
-                        "buttonActiveTextColor":"button-active-text-color",
-                        "buttonInactiveBgColor":"button-inactive-background-color",
-                        "buttonInactiveTextColor":"button-inactive-text-color",
-                        "userchatBgColor":"user-chat-bubble-background-color",
-                        "userchatTextColor":"user-chat-bubble-text-color",
-                        "widgetBodyColor":"widget-body-color",
-                        "widgetFooterColor":"widget-footer-color",
-                        "widgetHeaderColor":"widget-header-color",
-                        "widgetTextColor":"widget-text-color",
-                        "widgetBorderColor":"widget-border-color",
-                        "widgetDividerColor":"widget-divider-color",
-			"buttonOutlineColor": "button-outline-color",
+                        "botchatBgColor": "bot-chat-bubble-background-color",
+                        "botchatTextColor": "bot-chat-bubble-text-color",
+                        "buttonActiveBgColor": "button-active-background-color",
+                        "buttonActiveTextColor": "button-active-text-color",
+                        "buttonInactiveBgColor": "button-inactive-background-color",
+                        "buttonInactiveTextColor": "button-inactive-text-color",
+                        "userchatBgColor": "user-chat-bubble-background-color",
+                        "userchatTextColor": "user-chat-bubble-text-color",
+                        "widgetBodyColor": "widget-body-color",
+                        "widgetFooterColor": "widget-footer-color",
+                        "widgetHeaderColor": "widget-header-color",
+                        "widgetTextColor": "widget-text-color",
+                        "widgetBorderColor": "widget-border-color",
+                        "widgetDividerColor": "widget-divider-color",
+                        "buttonOutlineColor": "button-outline-color",
                     };
                     var cssVariable = "";
                     for (var key in response) {
-                        if(key == 'bankLogo' && response[key] !== ""){
+                        if (key == 'bankLogo' && response[key] !== "") {
                             // $(".logo-icon").css("background-image", "url(" + response['bankLogo'] + ")");
-                        } else if(key !== "theme" && key !== 'widgetBgImage'){
+                        } else if (key !== "theme" && key !== 'widgetBgImage') {
                             cssVariable = cssPrefix + cssBrandingVariables[key];
-                            document.documentElement.style.setProperty(cssVariable,response[key]);
-                        } else if(key == 'widgetBgImage' && response[key] !== ""){
+                            document.documentElement.style.setProperty(cssVariable, response[key]);
+                        } else if (key == 'widgetBgImage' && response[key] !== "") {
                             // setTimeout(function(){
-                                $(".kore-chat-body").css("background-image", "url(" + response['widgetBgImage'] + ")");
-                                $(".kore-chat-body").css("background-repeat", "no-repeat");
-                                $(".kore-chat-body").css("background-position", "center"); 
+                            $(".kore-chat-body").css("background-image", "url(" + response['widgetBgImage'] + ")");
+                            $(".kore-chat-body").css("background-repeat", "no-repeat");
+                            $(".kore-chat-body").css("background-position", "center");
                             // },1000);
-                           
-                        } else if(key == 'widgetBgImage' && response[key] == ""){
-				$(".kore-chat-body").css("background-image", "url(" + response['widgetBgImage'] + ")");
-				$(".kore-chat-body").css("background-repeat", "no-repeat");
-				$(".kore-chat-body").css("background-position", "center");
-			}
+
+                        } else if (key == 'widgetBgImage' && response[key] == "") {
+                            $(".kore-chat-body").css("background-image", "url(" + response['widgetBgImage'] + ")");
+                            $(".kore-chat-body").css("background-repeat", "no-repeat");
+                            $(".kore-chat-body").css("background-position", "center");
+                        }
                     }
                     $(".kore-chat-window").addClass('customBranding-theme');
                 }
-                
+
                 /* Remove hide class for tts and speech if sppech not enabled for this bot */
                 /*setTimeout(function () {
                     fetchBotDetails(response,botInfo);
                 }, 50);*/
             }
             this.chatHistory = function (res) {
-                
+
                 var me = window.chatContainerConfig;
-                if(res[2]==='historysync'){
+                if (res[2] === 'historysync') {
                     //setTimeout(function () {
-                        if (res && res[1] && res[1].messages.length > 0) {
-                            res[1].messages.forEach(function (msgData, index) {
-                                setTimeout(function () {
-                                    if (msgData.type === "outgoing" || msgData.type === "bot_response") {
-                                        //if ($('.kore-chat-window .chat-container li#' + msgData.messageId).length < 1) {
-                                            msgData.fromHistorySync=true;
-                                                                                        
-                                            try {
-                                                msgData.message[0].cInfo.body = JSON.parse(msgData.message[0].cInfo.body);
-                                                if (msgData.message[0].cInfo.body && msgData.message[0].cInfo.body.text) {
-                                                    msgData.message[0].cInfo.body = msgData.message[0].cInfo.body.text;
-                                                }
-                                                msgData.message[0].component = msgData.message[0].cInfo.body;
-                                                if (msgData.message[0].component.payload.template_type === 'dropdown_template') {
-                                                    msgData.message[0].component.selectedValue=res[1].messages[index+1].message[0].cInfo.body;                                    
-                                                }
-                                                if (msgData.message[0].component.payload.template_type === 'feedbackTemplate') {
-                                                    msgData.message[0].cInfo.body="Rate this chat session";
-                                                }
-                                                if(msgData.message[0].component && msgData.message[0].component.payload && (msgData.message[0].component.payload.videoUrl || msgData.message[0].component.payload.audioUrl)){
-                                                    msgData.message[0].cInfo.body = "";
-                                                }
-                                                me.renderMessage(msgData);
-                                            } catch (e) {
-                                                me.renderMessage(msgData);
-                                            }
-                                        //}
+                    if (res && res[1] && res[1].messages.length > 0) {
+                        res[1].messages.forEach(function (msgData, index) {
+                            setTimeout(function () {
+                                if (msgData.type === "outgoing" || msgData.type === "bot_response") {
+                                    //if ($('.kore-chat-window .chat-container li#' + msgData.messageId).length < 1) {
+                                    msgData.fromHistorySync = true;
+
+                                    try {
+                                        msgData.message[0].cInfo.body = JSON.parse(msgData.message[0].cInfo.body);
+                                        if (msgData.message[0].cInfo.body && msgData.message[0].cInfo.body.text) {
+                                            msgData.message[0].cInfo.body = msgData.message[0].cInfo.body.text;
+                                        }
+                                        msgData.message[0].component = msgData.message[0].cInfo.body;
+                                        if (msgData.message[0].component.payload.template_type === 'dropdown_template') {
+                                            msgData.message[0].component.selectedValue = res[1].messages[index + 1].message[0].cInfo.body;
+                                        }
+                                        if (msgData.message[0].component.payload.template_type === 'feedbackTemplate') {
+                                            msgData.message[0].cInfo.body = "Rate this chat session";
+                                        }
+                                        if (msgData.message[0].component && msgData.message[0].component.payload && (msgData.message[0].component.payload.videoUrl || msgData.message[0].component.payload.audioUrl)) {
+                                            msgData.message[0].cInfo.body = "";
+                                        }
+                                        me.renderMessage(msgData);
+                                    } catch (e) {
+                                        me.renderMessage(msgData);
                                     }
-                                }, index * 100);
-                            });
-                        }
+                                    //}
+                                }
+                            }, index * 100);
+                        });
+                    }
                     //}, 4000);//sync history messages after sockeet messages gets into viewport
-                }else  if (loadHistory) {   
+                } else if (loadHistory) {
                     historyLoading = true;
                     if (res && res[1] && res[1].messages.length > 0) {
                         $('.chat-container').hide();
@@ -3850,7 +3956,7 @@
                                         msgData.message[0].component = msgData.message[0].cInfo.body;
                                         if (msgData.message[0].component.payload.template_type === 'dropdown_template') {
                                             msgData.message[0].component.payload.fromHistory = true;
-                                            msgData.message[0].component.selectedValue=res[1].messages[index+1].message[0].cInfo.body;                                    
+                                            msgData.message[0].component.selectedValue = res[1].messages[index + 1].message[0].cInfo.body;
                                         }
                                         if (msgData.message[0].component.payload.template_type === 'multi_select' || msgData.message[0].component.payload.template_type === 'advanced_multi_select') {
                                             msgData.message[0].component.payload.fromHistory = true;
@@ -3866,9 +3972,9 @@
                                         }
                                         if (msgData.message[0].component.payload.template_type === 'feedbackTemplate') {
                                             msgData.message[0].component.payload.fromHistory = true;
-                                            msgData.message[0].cInfo.body="Rate this chat session";
+                                            msgData.message[0].cInfo.body = "Rate this chat session";
                                         }
-                                        if(msgData.message[0].component && msgData.message[0].component.payload && (msgData.message[0].component.payload.videoUrl || msgData.message[0].component.payload.audioUrl)){
+                                        if (msgData.message[0].component && msgData.message[0].component.payload && (msgData.message[0].component.payload.videoUrl || msgData.message[0].component.payload.audioUrl)) {
                                             msgData.message[0].cInfo.body = "";
                                         }
                                         me.renderMessage(msgData);
@@ -3884,32 +3990,31 @@
                                         }, 2500);
                                         $('.historyLoadingDiv').removeClass('showMsg');
                                         $('.chat-container').append("<div class='endChatContainer' aria-live='off' aria-hidden='true' ><span class='endChatContainerText'>End of chat history</span></div>");
-                                        if(messagesQueue.length){
-                                            messagesQueue.forEach(function(msg, currIndex){
+                                        if (messagesQueue.length) {
+                                            messagesQueue.forEach(function (msg, currIndex) {
                                                 me.renderMessage(msg);
-                                                if(messagesQueue.length-1 ===  currIndex) {
+                                                if (messagesQueue.length - 1 === currIndex) {
                                                     messagesQueue = [];
-                                                    setTimeout(function(){
+                                                    setTimeout(function () {
                                                         $('.chatInputBox').focus();
                                                         $('.disableFooter').removeClass('disableFooter');
                                                         historyLoading = false;
                                                     });
                                                 }
                                             });
-                                        }else{
-                                            setTimeout(function(){
+                                        } else {
+                                            setTimeout(function () {
                                                 $('.chatInputBox').focus();
                                                 $('.disableFooter').removeClass('disableFooter');
                                                 historyLoading = false;
                                             });
                                         }
-        
-                                    },500,messagesQueue);
+
+                                    }, 500, messagesQueue);
                                 }
-                            }, index * 100,messagesQueue);
+                            }, index * 100, messagesQueue);
                         });
-                    }
-                    else {
+                    } else {
                         setTimeout(function () {
                             $('.chatInputBox').focus();
                             $('.disableFooter').removeClass('disableFooter');
@@ -3923,16 +4028,17 @@
             var recognizing = false;
             var recognition = null;
             var prevStr = "";
-            setTimeout(function(){
-                if(allowGoogleSpeech) {
-                    if(window.initGapi){
+            setTimeout(function () {
+                if (allowGoogleSpeech) {
+                    if (window.initGapi) {
                         initGapi();
-                    }else{
+                    } else {
                         console.warn("Please uncomment Google Speech files('speech/app.js','speech/key.js' and 'client_api.js' in index.html")
                     }
-        
+
                 }
-            },2000);
+            }, 2000);
+
             function isChrome() {
                 var isChromium = window.chrome,
                     winNav = window.navigator,
@@ -3955,6 +4061,7 @@
                     return false;
                 }
             }
+
             function unfreezeUIOnHistoryLoadingFail() {
                 setTimeout(function () {
                     if (loadHistory) {
@@ -4023,13 +4130,17 @@
 
             var two_line = /\n\n/g;
             var one_line = /\n/g;
+
             function linebreak(s) {
                 return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
             }
 
             function capitalize(s) {
-                return s.replace(s.substr(0, 1), function (m) { return m.toUpperCase(); });
+                return s.replace(s.substr(0, 1), function (m) {
+                    return m.toUpperCase();
+                });
             }
+
             function startGoogleWebKitRecognization() {
                 if (recognizing) {
                     recognition.stop();
@@ -4039,6 +4150,7 @@
                 recognition.lang = 'en-US';
                 recognition.start();
             }
+
             function startGoogleSpeech() {
                 if (rec) {
                     rec.record();
@@ -4050,8 +4162,7 @@
                             console.log(new Date());
                             if (allowGoogleSpeech) {
                                 sendBlobToSpeech(blob, 'LINEAR16', 16000);
-                            }
-                            else {
+                            } else {
                                 socketSend(blob);
                             }
                             rec.clear();
@@ -4061,23 +4172,23 @@
             }
 
             function getSIDToken() {
-                if(allowGoogleSpeech) {
-                    if(recognition) { // using webkit speech recognition
+                if (allowGoogleSpeech) {
+                    if (recognition) { // using webkit speech recognition
                         startGoogleWebKitRecognization();
-                    }
-                    else { // using google cloud speech API
+                    } else { // using google cloud speech API
                         micEnable();
                     }
-                }
-                else {
-                    if(!speechPrefixURL){
+                } else {
+                    if (!speechPrefixURL) {
                         console.warn("Please provide speech socket url");
                         return false;
                     }
                     $.ajax({
-                        url: speechPrefixURL+"asr/wss/start?email="+userIdentity,
+                        url: speechPrefixURL + "asr/wss/start?email=" + userIdentity,
                         type: 'post',
-                         headers: {"Authorization": (bearerToken) ? bearerToken : assertionToken},
+                        headers: {
+                            "Authorization": (bearerToken) ? bearerToken : assertionToken
+                        },
                         dataType: 'json',
                         success: function (data) {
                             sidToken = data.link;
@@ -4089,6 +4200,7 @@
                     });
                 }
             }
+
             function micEnable() {
                 if (isRecordingStarted) {
                     return;
@@ -4159,8 +4271,7 @@
                 _permission = true;
                 if (!allowGoogleSpeech) {
                     afterMicEnable();
-                }
-                else {
+                } else {
                     startGoogleSpeech();
                 }
                 setTimeout(function () {
@@ -4352,24 +4463,24 @@
             /*************************************    TTS code start here         **************************************/
 
             function speakWithWebAPI(_txtToSpeak) {
-                if('speechSynthesis' in window){
+                if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     // Create a new instance of SpeechSynthesisUtterance.
                     var msg = new SpeechSynthesisUtterance();
-                    msg.text =_txtToSpeak;
-                   //  msg.voice = speechSynthesis.getVoices().filter(function(voice) {        
-                   //      return voice.default===true;
-                   //     })[0];
-                   // Queue this utterance.
+                    msg.text = _txtToSpeak;
+                    //  msg.voice = speechSynthesis.getVoices().filter(function(voice) {        
+                    //      return voice.default===true;
+                    //     })[0];
+                    // Queue this utterance.
                     window.speechSynthesis.speak(msg);
-               }else{
-                   console.warn("KORE:Your browser doesn't support TTS(Speech Synthesiser)")
-               }
+                } else {
+                    console.warn("KORE:Your browser doesn't support TTS(Speech Synthesiser)")
+                }
             }
 
             function createSocketForTTS() {
 
-                if(!ttsServerUrl){
+                if (!ttsServerUrl) {
                     console.warn("Please provide tts socket url");
                     return false;
                 }
@@ -4412,6 +4523,7 @@
                     _ttsConnection = null;
                 }
             }
+
             function socketSendTTSMessage(item) {
                 if (_ttsConnection) {
                     var state = _ttsConnection.readyState;
@@ -4431,6 +4543,7 @@
                     console.error('No web socket connection: failed to send');
                 }
             }
+
             function initTTSAudioContext() {
                 if (!_ttsContext) {
                     if (!window.AudioContext) {
@@ -4444,6 +4557,7 @@
                 }
             }
             initTTSAudioContext();
+
             function playsound(raw) {
                 _ttsContext.decodeAudioData(raw, function (buffer) {
                     if (!buffer) {
@@ -4465,8 +4579,7 @@
                                 }
                             }, 350);
                         });
-                    } catch (e) {
-                    }
+                    } catch (e) {}
                 }, function (error) {
                     console.error("failed to decode:", error);
                 });
@@ -4517,8 +4630,10 @@
                     callback.call(null, files);
                 }
             }
+
             function cnvertFiles(_this, _file, customFileName) {
-                var _scope = _this, recState = {};
+                var _scope = _this,
+                    recState = {};
                 if (_file && _file.size) {
                     if (_file.size > filetypes.file.limit.size) {
                         alert(filetypes.file.limit.msg);
@@ -4554,12 +4669,14 @@
                             //read duration;
                             var rd = new FileReader();
                             rd.onload = function (e) {
-                                var blob = new Blob([e.target.result], { type: _file.type }), // create a blob of buffer
+                                var blob = new Blob([e.target.result], {
+                                        type: _file.type
+                                    }), // create a blob of buffer
                                     url = (URL || webkitURL).createObjectURL(blob), // create o-URL of blob
-                                    video = document.createElement(recState.type);              // create video element
-                                video.preload = "metadata";                               // preload setting
+                                    video = document.createElement(recState.type); // create video element
+                                video.preload = "metadata"; // preload setting
                                 if (video.readyState === 0) {
-                                    video.addEventListener("loadedmetadata", function (evt) {     // whenshow duration
+                                    video.addEventListener("loadedmetadata", function (evt) { // whenshow duration
                                         var _dur = Math.round(evt.target.duration);
                                         if (recState.type === "audio") {
                                             (URL || webkitURL).revokeObjectURL(url); //fallback for webkit
@@ -4573,7 +4690,7 @@
                                             getFileToken(_this, _file, recState);
                                         });
                                     }
-                                    video.src = url;                                          // start video load
+                                    video.src = url; // start video load
                                 } else {
                                     (URL || webkitURL).revokeObjectURL(url); //fallback for webkit
                                     getFileToken(_this, _file, recState);
@@ -4584,7 +4701,9 @@
                             if (_file.type.indexOf('image') !== (-1)) {
                                 var imgRd = new FileReader();
                                 imgRd.onload = function (e) {
-                                    var blob = new Blob([e.target.result], { type: _file.type }), // create a blob of buffer
+                                    var blob = new Blob([e.target.result], {
+                                            type: _file.type
+                                        }), // create a blob of buffer
                                         url = (URL || webkitURL).createObjectURL(blob); // create o-URL of blob
                                     var img = new Image();
                                     img.src = url;
@@ -4594,8 +4713,7 @@
                                     };
                                 };
                                 imgRd.readAsArrayBuffer(_file);
-                            }
-                            else {
+                            } else {
                                 getFileToken(_this, _file, recState);
                             }
                         }
@@ -4604,6 +4722,7 @@
                     }
                 }
             };
+
             function getUID(pattern) {
                 var _pattern = pattern || 'xxxxyx';
                 _pattern = _pattern.replace(/[xy]/g, function (c) {
@@ -4613,6 +4732,7 @@
                 });
                 return _pattern;
             };
+
             function getDataURL(src) {
                 var thecanvas = document.createElement("canvas");
                 thecanvas.height = 180;
@@ -4623,8 +4743,10 @@
                 var dataURL = thecanvas.toDataURL();
                 return dataURL;
             };
+
             function acceptAndUploadFile(_this, file, recState) {
-                var _scope = _this, ele;
+                var _scope = _this,
+                    ele;
                 var uc = getfileuploadConf(recState);
                 uc.chunkUpload = file.size > appConsts.CHUNK_SIZE;
                 uc.chunkSize = appConsts.CHUNK_SIZE;
@@ -4648,6 +4770,7 @@
                     reader.readAsDataURL(file);
                 }
             };
+
             function getFileToken(_obj, _file, recState) {
                 var auth = "bearer " + window.jwtDetails.authorization.accessToken;
                 var _self = this;
@@ -4663,18 +4786,19 @@
                         acceptAndUploadFile(_obj, _file, recState);
                     },
                     error: function (msg) {
-                        chatInitialize.config.botOptions._reconnecting=true;
+                        chatInitialize.config.botOptions._reconnecting = true;
                         _self.showError("Failed to upload file.Please try again");
-                        if(msg.responseJSON && msg.responseJSON.errors && msg.responseJSON.errors.length && msg.responseJSON.errors[0].httpStatus==="401"){
-                            setTimeout(function(){
+                        if (msg.responseJSON && msg.responseJSON.errors && msg.responseJSON.errors.length && msg.responseJSON.errors[0].httpStatus === "401") {
+                            setTimeout(function () {
                                 _self.hideError();
-                            },5000);
+                            }, 5000);
                             $(".kore-chat-window .reload-btn").trigger("click");
                         }
                         console.log("Oops, something went horribly wrong");
                     }
                 });
             }
+
             function getfileuploadConf(_recState) {
                 appConsts.UPLOAD = {
                     "FILE_ENDPOINT": koreAPIUrl + "/1.1/attachment/file",
@@ -4698,6 +4822,7 @@
                 };
                 return _uploadConfg;
             };
+
             function notifyFlie(_this, _recState, _tofileId) {
                 var _this = _this;
                 var _data = {};
@@ -4718,6 +4843,7 @@
                 }
                 onComponentReady(_this, _data);
             };
+
             function initiateRcorder(_recState, ele) {
                 var _scope = this;
                 ele = ele || _scope.ele;
@@ -4726,6 +4852,7 @@
                 });
                 ele.on('error.ke.uploader', onUploadError);
             };
+
             function onFileToUploaded(_this, evt, _recState) {
                 var _this = _this;
                 var _data = evt.params;
@@ -4738,6 +4865,7 @@
                     notifyfileCmpntRdy(_this, _recState, _tofileId);
                 }
             };
+
             function onUploadError(_this, evt, _recState) {
                 var _scope = _this;
                 _recfileLisnr.onError({
@@ -4745,6 +4873,7 @@
                 });
                 _scope.removeCmpt(_recState);
             };
+
             function onError() {
                 alert("Failed to upload content. Try again");
                 attachmentInfo = {};
@@ -4752,6 +4881,7 @@
                 $('.sendButton').addClass('disabled');
                 fileUploaderCounter = 0;
             };
+
             function onComponentReady(_this, data) {
                 var _this = _this,
                     _src,
@@ -4779,8 +4909,7 @@
                         } else if (fileType === 'docx' || fileType === 'doc') {
                             _cmpt.append('<div class="uploadedFileIcon"><span class="icon cf-icon icon-files_word"></span></div>');
                             _cmpt.append('<div class="uploadedFileName">' + data.values.componentData.filename + '</div>');
-                        }
-                        else if (fileType === 'pdf') {
+                        } else if (fileType === 'pdf') {
                             _cmpt.append('<div class="uploadedFileIcon"><span class="icon cf-icon icon-files_pdf"></span></div>');
                             _cmpt.append('<div class="uploadedFileName">' + data.values.componentData.filename + '</div>');
                         } else if (fileType === 'ppsx' || fileType === 'pptx' || fileType === 'ppt') {
@@ -4812,12 +4941,13 @@
                 $('.chatInputBox').focus();
                 attachmentInfo.fileName = data.values.componentData.filename;
                 attachmentInfo.fileType = data.values.componentType;
-                if(data &&  data.values &&  data.values.componentFileId){
-                    attachmentInfo.fileId =  data.values.componentFileId;
+                if (data && data.values && data.values.componentFileId) {
+                    attachmentInfo.fileId = data.values.componentFileId;
                 }
-                
+
                 $('.sendButton').removeClass('disabled');
             };
+
             function acceptFileRecording(_this, _recState, ele) {
                 var _scope = _this;
                 var _uc = getfileuploadConf(_recState),
@@ -4837,6 +4967,7 @@
                 initiateRcorder(_recState, ele);
                 ele.uploader(_uc);
             };
+
             function notifyfileCmpntRdy(_this, _recState, _tofileId) {
                 var _this = _this;
                 var _data = {};
@@ -4888,6 +5019,7 @@
                 body += "--" + boundary + "--";
                 return body;
             };
+
             function Uploader(element, options) {
                 this.options = options;
                 this.$element = element;
@@ -4903,6 +5035,7 @@
                 progressChange: $.Event('progress.ke.uploader'),
                 success: $.Event('success.ke.uploader')
             };
+
             function getConnection(_this) {
                 return new kfrm.net.HttpRequest();
             };
@@ -4925,8 +5058,7 @@
                 _this.$element.trigger(_this.events.error);
             };
 
-            function progressListener(_this, evt) {
-            };
+            function progressListener(_this, evt) {};
 
             function setOptions(_this, opts) {
                 _this.options = opts;
@@ -5056,6 +5188,7 @@
                 }
                 _conc.send();
             };
+
             function startUpload(_this) {
                 var _scope = _this;
                 _conc = getConnection(_this),
@@ -5150,8 +5283,7 @@
                                 dimens.innerHeight = 310;
                                 KoreGraphAdapter.drawD3barHorizontalbarChart(data.data, dimens, '.chartContainerDiv', 12);
                             }
-                        }
-                        else if (data.data.message[0].component.payload.template_type === "linechart") {
+                        } else if (data.data.message[0].component.payload.template_type === "linechart") {
                             var dimens = {};
                             dimens.outerWidth = 650;
                             dimens.outerHeight = 450;
@@ -5163,8 +5295,7 @@
                             //  KoreGraphAdapter.drawD3lineChart(data.data, dimens, '.chartContainerDiv', 12);
                             KoreGraphAdapter.drawD3lineChartV2(data.data, dimens, '.chartContainerDiv', 12);
 
-                        }
-                        else if (data.data.message[0].component.payload.pie_type) {
+                        } else if (data.data.message[0].component.payload.pie_type) {
                             var dimens = {};
                             dimens.width = 600;
                             dimens.height = 400;
@@ -5173,48 +5304,54 @@
                             $('chartContainerDiv').html('');
                             if (data.data.message[0].component.payload.pie_type === "regular") {
                                 KoreGraphAdapter.drawD3Pie(data.data, dimens, '.chartContainerDiv', 16);
-                            }
-                            else if (data.data.message[0].component.payload.pie_type === "donut") {
+                            } else if (data.data.message[0].component.payload.pie_type === "donut") {
                                 KoreGraphAdapter.drawD3PieDonut(data.data, dimens, '.chartContainerDiv', 16, 'donut');
-                            }
-                            else if (data.data.message[0].component.payload.pie_type === "donut_legend") {
+                            } else if (data.data.message[0].component.payload.pie_type === "donut_legend") {
                                 $('chartContainerDiv').html('');
                                 KoreGraphAdapter.drawD3PieDonut(data.data, dimens, '.chartContainerDiv', 16, 'donut_legend');
                             }
                         }
-                    }
-                    else if (graphLibGlob === "google") {
+                    } else if (graphLibGlob === "google") {
                         if (data.type === "piechart") {
-                            google.charts.load('current', { 'packages': ['corechart'] });
+                            google.charts.load('current', {
+                                'packages': ['corechart']
+                            });
                             google.charts.setOnLoadCallback(drawChart);
+
                             function drawChart() {
                                 container = document.getElementsByClassName('chartContainerDiv');
                                 chart = new google.visualization.PieChart(container[0]);
                             }
-                        }
-                        else if (data.type === "linechart") {
-                            google.charts.load('current', { packages: ['corechart', 'line'] });
+                        } else if (data.type === "linechart") {
+                            google.charts.load('current', {
+                                packages: ['corechart', 'line']
+                            });
                             google.charts.setOnLoadCallback(drawChart);
+
                             function drawChart() {
                                 container = document.getElementsByClassName('chartContainerDiv');
                                 chart = new google.visualization.LineChart(container[0]);
                             }
-                        }
-                        else if (data.type === "barchart") {
-                            google.charts.load('current', { packages: ['corechart', 'bar'] });
+                        } else if (data.type === "barchart") {
+                            google.charts.load('current', {
+                                packages: ['corechart', 'bar']
+                            });
                             google.charts.setOnLoadCallback(drawChart);
+
                             function drawChart() {
                                 container = document.getElementsByClassName('chartContainerDiv');
                                 if (data.direction === 'vertical') {
                                     chart = new google.visualization.ColumnChart(container[0]);
-                                }
-                                else {
+                                } else {
                                     chart = new google.visualization.BarChart(container[0]);
                                 }
                             }
                         }
                         setTimeout(function () {
-                            var chartAreaObj = { "height": "85%", "width": "85%" };
+                            var chartAreaObj = {
+                                "height": "85%",
+                                "width": "85%"
+                            };
                             data.options.chartArea = chartAreaObj;
                             google.visualization.events.addListener(chart, 'ready', function () {
                                 setTimeout(function () {
@@ -5232,7 +5369,7 @@
                 var _args = Array.prototype.slice.call(arguments, 1);
                 return this.each(function () {
                     var $this = $(this),
-                        data = '';//$this.data('ke.uploader'),
+                        data = ''; //$this.data('ke.uploader'),
                     options = typeof option === 'object' && option;
 
                     if (!data) {
@@ -5254,15 +5391,17 @@
                 $.fn.uploader = old;
                 return this;
             };
-	    function toTitleCase(str) {
-		return str.replace(/(?:^|\s)\w/g, function(match) {
-			return match.toUpperCase();
-		});
-	    }
+
+            function toTitleCase(str) {
+                return str.replace(/(?:^|\s)\w/g, function (match) {
+                    return match.toUpperCase();
+                });
+            }
             /************************************************************************************************************************************************
-            ********************************************** kore.ai framework file ******************************************************************************
-            ************************************************************************************************************************************************/
-            +function () {
+             ********************************************** kore.ai framework file ******************************************************************************
+             ************************************************************************************************************************************************/
+            +
+            function () {
                 function getHTTPConnecton() {
                     var xhr = false;
                     xhr = new XMLHttpRequest();
@@ -5281,8 +5420,7 @@
                     }
                     try {
                         xhr.withCredentials = true;
-                    } catch (e) {
-                    }
+                    } catch (e) {}
                     xhr.onreadystatechange = function () {
                         return xhr.onReadyStateChange && xhr.onReadyStateChange.call(xhr);
                     };
@@ -5300,8 +5438,8 @@
                 showError: showError,
                 botDetails: botDetails,
                 chatHistory: chatHistory,
-                addWidgetEvents:addWidgetEvents,
-                setWidgetInstance:setWidgetInstance
+                addWidgetEvents: addWidgetEvents,
+                setWidgetInstance: setWidgetInstance
             };
 
             //Actual chatwindow.js koreBotChat function code end here
